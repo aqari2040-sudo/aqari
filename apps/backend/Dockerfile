@@ -15,8 +15,13 @@ RUN pnpm install --no-frozen-lockfile
 COPY packages/shared/ packages/shared/
 COPY apps/backend/ apps/backend/
 
-# Generate Prisma client and build
-RUN cd apps/backend && npx prisma generate && cd ../../packages/shared && npx tsc || true
+# Generate Prisma client
+RUN cd apps/backend && npx prisma generate
+
+# Build shared package (CommonJS output)
+RUN cd packages/shared && npx tsc
+
+# Build backend
 RUN cd apps/backend && npx nest build
 
 ENV NODE_ENV=production
