@@ -34,12 +34,11 @@ export default function PaymentDetailPage({
     queryKey: ['payment', id],
     queryFn: async () => {
       const res = await apiClient.get(`/payments/${id}`);
-      return res.data;
-    },
-    onSuccess: (data: any) => {
+      const data = res.data;
       if (data.ocr_extracted_amount) setConfirmAmount(String(data.ocr_extracted_amount));
       if (data.ocr_extracted_date) setConfirmDate(data.ocr_extracted_date.split('T')[0]);
       else if (data.payment_date) setConfirmDate(data.payment_date.split('T')[0]);
+      return data;
     },
   });
 
