@@ -4,7 +4,7 @@ dockerfilePath = "apps/backend/Dockerfile"
 watchPatterns = ["apps/backend/**", "packages/shared/**"]
 
 [deploy]
-startCommand = "node dist/main.js"
+startCommand = "node apps/backend/dist/main.js"
 healthcheckPath = "/api/v1/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
