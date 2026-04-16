@@ -272,9 +272,7 @@ export class NotificationsService {
             },
           },
           include: {
-            tenant: {
-              include: { user: true },
-            },
+            tenant: true,
             unit: {
               include: { property: true },
             },

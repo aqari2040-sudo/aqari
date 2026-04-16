@@ -266,11 +266,11 @@ export class TenantsService {
       where: { tenant_id: id },
       orderBy: { created_at: 'desc' },
       include: {
-        schedule: {
+        payment_schedule: {
           select: {
             id: true,
             due_date: true,
-            amount: true,
+            amount_due: true,
             status: true,
           },
         },
