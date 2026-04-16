@@ -18,15 +18,18 @@ async function main() {
   ];
 
   for (const cat of categories) {
-    await prisma.maintenanceCategory.upsert({
-      where: { id: cat.name.toLowerCase().replace(/\s/g, '_') },
-      update: {},
-      create: {
-        name: cat.name,
-        name_ar: cat.name_ar,
-        is_active: true,
-      },
+    const existing = await prisma.maintenanceCategory.findFirst({
+      where: { name: cat.name },
     });
+    if (!existing) {
+      await prisma.maintenanceCategory.create({
+        data: {
+          name: cat.name,
+          name_ar: cat.name_ar,
+          is_active: true,
+        },
+      });
+    }
   }
 
   console.log(`Seeded ${categories.length} maintenance categories`);
