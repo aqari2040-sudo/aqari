@@ -5,7 +5,7 @@ RUN corepack enable pnpm
 WORKDIR /app
 
 # Copy workspace config
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json tsconfig.base.json ./
 COPY apps/backend/package.json apps/backend/
 COPY packages/shared/package.json packages/shared/
 
@@ -26,10 +26,11 @@ WORKDIR /app
 
 COPY --from=builder /app/apps/backend/dist ./dist
 COPY --from=builder /app/apps/backend/prisma ./prisma
-COPY --from=builder /app/apps/backend/node_modules ./node_modules
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/backend/package.json ./
 
 ENV NODE_ENV=production
-EXPOSE 3001
+ENV PORT=3000
+EXPOSE 3000
 
 CMD ["node", "dist/main.js"]
