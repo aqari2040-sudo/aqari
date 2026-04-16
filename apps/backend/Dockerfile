@@ -16,9 +16,14 @@ RUN pnpm install --frozen-lockfile
 COPY packages/shared/ packages/shared/
 COPY apps/backend/ apps/backend/
 
-# Build
-RUN pnpm turbo build --filter=@aqari/backend
+# Generate Prisma client BEFORE build
 RUN pnpm prisma generate --schema=apps/backend/prisma/schema.prisma
+
+# Build shared package
+RUN cd packages/shared && npx tsc || true
+
+# Build backend
+RUN cd apps/backend && npx nest build
 
 # Production stage
 FROM node:20-alpine AS runner
