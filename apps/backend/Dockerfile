@@ -1,5 +1,4 @@
-# Build stage
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 RUN corepack enable pnpm
 
 WORKDIR /app
@@ -20,17 +19,8 @@ COPY apps/backend/ apps/backend/
 RUN cd apps/backend && npx prisma generate && cd ../../packages/shared && npx tsc || true
 RUN cd apps/backend && npx nest build
 
-# Production stage
-FROM node:20-alpine AS runner
-WORKDIR /app
-
-COPY --from=builder /app/apps/backend/dist ./dist
-COPY --from=builder /app/apps/backend/prisma ./prisma
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/backend/package.json ./
-
 ENV NODE_ENV=production
 ENV PORT=3000
 EXPOSE 3000
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "apps/backend/dist/main.js"]
