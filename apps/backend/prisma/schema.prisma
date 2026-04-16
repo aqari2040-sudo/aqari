@@ -1,0 +1,340 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Properties ─────────────────────────────────────────────
+
+enum PropertyType {
+  tower
+  house_group
+}
+
+model Property {
+  id         String       @id @default(uuid()) @db.Uuid
+  name       String       @db.VarChar(255)
+  name_ar    String       @db.VarChar(255)
+  type       PropertyType
+  address    String
+  address_ar String
+  created_at DateTime     @default(now()) @db.Timestamptz
+  updated_at DateTime     @updatedAt @db.Timestamptz
+  deleted_at DateTime?    @db.Timestamptz
+
+  units Unit[]
+
+  @@map("properties")
+}
+
+// ─── Units ──────────────────────────────────────────────────
+
+enum UnitStatus {
+  occupied
+  vacant
+  under_maintenance
+}
+
+enum BudgetPeriod {
+  monthly
+  quarterly
+  yearly
+}
+
+model Unit {
+  id                        String       @id @default(uuid()) @db.Uuid
+  property_id               String       @db.Uuid
+  unit_number               String       @db.VarChar(50)
+  status                    UnitStatus   @default(vacant)
+  base_rent                 Decimal      @db.Decimal(10, 2)
+  size_sqft                 Decimal      @db.Decimal(8, 2)
+  bedrooms                  Int          @db.SmallInt
+  bathrooms                 Int          @db.SmallInt
+  maintenance_budget        Decimal      @db.Decimal(10, 2)
+  maintenance_budget_period BudgetPeriod @default(monthly)
+  notes                     String?
+  created_at                DateTime     @default(now()) @db.Timestamptz
+  updated_at                DateTime     @updatedAt @db.Timestamptz
+  deleted_at                DateTime?    @db.Timestamptz
+
+  property              Property             @relation(fields: [property_id], references: [id])
+  contracts             Contract[]
+  payments              Payment[]
+  maintenance_requests  MaintenanceRequest[]
+
+  @@unique([property_id, unit_number])
+  @@map("units")
+}
+
+// ─── Tenants ────────────────────────────────────────────────
+
+enum IdType {
+  emirates_id
+  passport
+}
+
+model Tenant {
+  id                      String    @id @default(uuid()) @db.Uuid
+  user_id                 String    @unique @db.Uuid
+  full_name               String    @db.VarChar(255)
+  full_name_ar            String    @db.VarChar(255)
+  id_type                 IdType
+  id_number               String    @db.VarChar(50)
+  phone                   String    @unique @db.VarChar(20)
+  email                   String?   @db.VarChar(255)
+  emergency_contact_name  String?   @db.VarChar(255)
+  emergency_contact_phone String?   @db.VarChar(20)
+  created_at              DateTime  @default(now()) @db.Timestamptz
+  updated_at              DateTime  @updatedAt @db.Timestamptz
+  deleted_at              DateTime? @db.Timestamptz
+
+  contracts Contract[]
+  payments  Payment[]
+
+  @@map("tenants")
+}
+
+// ─── Contracts ──────────────────────────────────────────────
+
+enum ContractStatus {
+  active
+  expired
+  terminated
+}
+
+enum PaymentFrequency {
+  monthly
+  quarterly
+  yearly
+}
+
+model Contract {
+  id                String           @id @default(uuid()) @db.Uuid
+  tenant_id         String           @db.Uuid
+  unit_id           String           @db.Uuid
+  start_date        DateTime         @db.Date
+  end_date          DateTime         @db.Date
+  rent_amount       Decimal          @db.Decimal(10, 2)
+  payment_frequency PaymentFrequency
+  grace_period_days Int              @default(7) @db.SmallInt
+  document_url      String?
+  status            ContractStatus   @default(active)
+  notes             String?
+  created_at        DateTime         @default(now()) @db.Timestamptz
+  updated_at        DateTime         @updatedAt @db.Timestamptz
+  deleted_at        DateTime?        @db.Timestamptz
+
+  tenant            Tenant            @relation(fields: [tenant_id], references: [id])
+  unit              Unit              @relation(fields: [unit_id], references: [id])
+  payment_schedules PaymentSchedule[]
+
+  @@map("contracts")
+}
+
+// ─── Payment Schedules ──────────────────────────────────────
+
+enum PaymentScheduleStatus {
+  pending
+  partial
+  paid
+  overdue
+  cancelled
+}
+
+model PaymentSchedule {
+  id            String                @id @default(uuid()) @db.Uuid
+  contract_id   String                @db.Uuid
+  due_date      DateTime              @db.Date
+  amount_due    Decimal               @db.Decimal(10, 2)
+  amount_paid   Decimal               @default(0) @db.Decimal(10, 2)
+  status        PaymentScheduleStatus @default(pending)
+  overdue_since DateTime?             @db.Date
+  created_at    DateTime              @default(now()) @db.Timestamptz
+  updated_at    DateTime              @updatedAt @db.Timestamptz
+
+  contract Contract  @relation(fields: [contract_id], references: [id])
+  payments Payment[]
+
+  @@map("payment_schedules")
+}
+
+// ─── Payments ───────────────────────────────────────────────
+
+enum PaymentStatus {
+  pending_review
+  confirmed
+  rejected
+}
+
+model Payment {
+  id                   String        @id @default(uuid()) @db.Uuid
+  payment_schedule_id  String        @db.Uuid
+  tenant_id            String        @db.Uuid
+  unit_id              String        @db.Uuid
+  amount               Decimal       @db.Decimal(10, 2)
+  payment_date         DateTime      @db.Date
+  receipt_file_url     String
+  ocr_extracted_amount Decimal?      @db.Decimal(10, 2)
+  ocr_extracted_date   DateTime?     @db.Date
+  ocr_confidence       Decimal?      @db.Decimal(3, 2)
+  ocr_flagged          Boolean       @default(false)
+  confirmed_by         String?       @db.Uuid
+  confirmed_at         DateTime?     @db.Timestamptz
+  status               PaymentStatus @default(pending_review)
+  rejection_reason     String?
+  created_at           DateTime      @default(now()) @db.Timestamptz
+  updated_at           DateTime      @updatedAt @db.Timestamptz
+  deleted_at           DateTime?     @db.Timestamptz
+
+  payment_schedule PaymentSchedule @relation(fields: [payment_schedule_id], references: [id])
+  tenant           Tenant          @relation(fields: [tenant_id], references: [id])
+  unit             Unit            @relation(fields: [unit_id], references: [id])
+
+  @@map("payments")
+}
+
+// ─── Maintenance Categories ─────────────────────────────────
+
+model MaintenanceCategory {
+  id        String  @id @default(uuid()) @db.Uuid
+  name      String  @db.VarChar(100)
+  name_ar   String  @db.VarChar(100)
+  is_active Boolean @default(true)
+
+  maintenance_requests MaintenanceRequest[]
+
+  @@map("maintenance_categories")
+}
+
+// ─── Maintenance Requests ───────────────────────────────────
+
+enum MaintenanceStatus {
+  submitted
+  blocked_duplicate
+  in_progress
+  pending_approval
+  approved
+  rejected
+  completed
+}
+
+enum MaintenancePriority {
+  low
+  medium
+  high
+  urgent
+}
+
+model MaintenanceRequest {
+  id                               String              @id @default(uuid()) @db.Uuid
+  unit_id                          String              @db.Uuid
+  reported_by                      String              @db.Uuid
+  category_id                      String              @db.Uuid
+  description                      String
+  photos                           String[]
+  priority                         MaintenancePriority @default(medium)
+  status                           MaintenanceStatus   @default(submitted)
+  is_duplicate_override            Boolean             @default(false)
+  duplicate_override_justification String?
+  duplicate_override_by            String?             @db.Uuid
+  duplicate_of_id                  String?             @db.Uuid
+  created_at                       DateTime            @default(now()) @db.Timestamptz
+  updated_at                       DateTime            @updatedAt @db.Timestamptz
+  deleted_at                       DateTime?           @db.Timestamptz
+
+  unit              Unit                 @relation(fields: [unit_id], references: [id])
+  category          MaintenanceCategory  @relation(fields: [category_id], references: [id])
+  duplicate_of      MaintenanceRequest?  @relation("DuplicateChain", fields: [duplicate_of_id], references: [id])
+  duplicates        MaintenanceRequest[] @relation("DuplicateChain")
+  maintenance_costs MaintenanceCost[]
+
+  @@map("maintenance_requests")
+}
+
+// ─── Maintenance Costs ──────────────────────────────────────
+
+enum MaintenanceCostStatus {
+  pending
+  approved
+  rejected
+}
+
+model MaintenanceCost {
+  id                     String                @id @default(uuid()) @db.Uuid
+  maintenance_request_id String                @db.Uuid
+  submitted_by           String                @db.Uuid
+  amount                 Decimal               @db.Decimal(10, 2)
+  description            String
+  receipt_url            String?
+  status                 MaintenanceCostStatus @default(pending)
+  approved_by            String?               @db.Uuid
+  approved_at            DateTime?             @db.Timestamptz
+  rejection_reason       String?
+  created_at             DateTime              @default(now()) @db.Timestamptz
+  updated_at             DateTime              @updatedAt @db.Timestamptz
+
+  maintenance_request MaintenanceRequest @relation(fields: [maintenance_request_id], references: [id])
+
+  @@map("maintenance_costs")
+}
+
+// ─── Audit Logs ─────────────────────────────────────────────
+
+enum AuditAction {
+  create
+  update
+  delete
+}
+
+model AuditLog {
+  id         String      @id @default(uuid()) @db.Uuid
+  user_id    String      @db.Uuid
+  action     AuditAction
+  table_name String      @db.VarChar(100)
+  record_id  String      @db.Uuid
+  old_values Json?
+  new_values Json?
+  ip_address String?     @db.VarChar(45)
+  user_agent String?
+  created_at DateTime    @default(now()) @db.Timestamptz
+
+  @@index([table_name, record_id])
+  @@index([user_id])
+  @@index([created_at])
+  @@map("audit_logs")
+}
+
+// ─── Notifications ──────────────────────────────────────────
+
+model Notification {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  type       String   @db.VarChar(50)
+  title      String   @db.VarChar(255)
+  title_ar   String   @db.VarChar(255)
+  body       String
+  body_ar    String
+  is_read    Boolean  @default(false)
+  metadata   Json?
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@index([user_id, is_read])
+  @@index([created_at])
+  @@map("notifications")
+}
+
+// ─── Settings ───────────────────────────────────────────────
+
+model Setting {
+  id         String   @id @default(uuid()) @db.Uuid
+  key        String   @unique @db.VarChar(100)
+  value      Json
+  updated_by String?  @db.Uuid
+  updated_at DateTime @updatedAt @db.Timestamptz
+
+  @@map("settings")
+}

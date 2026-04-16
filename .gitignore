@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+.turbo/
+out/
+
+# Expo
+.expo/
+ios/
+android/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+apps/backend/prisma/*.db
+
+# Test
+coverage/
+playwright-report/
+test-results/
+
+# Sentry
+.sentryclirc
+
+# Misc
+*.log
+*.tsbuildinfo
