@@ -54,7 +54,7 @@ export function Sidebar({ locale }: { locale: string }) {
       {/* Logo */}
       <div className="flex h-20 items-center justify-center border-b border-white/10 px-4">
         <Link href={`/${locale}/dashboard`} className="flex items-center gap-3">
-          <img src="/logo.png" alt="Aqari" className="h-10 w-10 brightness-0 invert" />
+          <img src="/icon.png" alt="Aqari" className="h-10 w-10 rounded-full invert" />
           <div>
             <span className="font-display text-xl font-bold text-sheen-gold">Aqari</span>
             <span className="block text-xs text-sheen-cream/50">عقاري</span>
