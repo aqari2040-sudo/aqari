@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Noto+Kufi+Arabic:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -45,10 +45,14 @@
   }
 }
 
-/* Same font for both directions — DM Sans handles Arabic well */
-[dir='rtl'],
+/* LTR uses DM Sans, RTL uses Noto Kufi Arabic */
 [dir='ltr'] {
   font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+[dir='rtl'] {
+  font-family: 'Noto Kufi Arabic', 'DM Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 

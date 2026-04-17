@@ -62,7 +62,7 @@ const config: Config = {
         display: ['Playfair Display', 'serif'],
         body: ['DM Sans', 'sans-serif'],
         sans: ['DM Sans', 'sans-serif'],
-        arabic: ['DM Sans', 'sans-serif'],
+        arabic: ['Noto Kufi Arabic', 'DM Sans', 'sans-serif'],
       },
     },
   },
