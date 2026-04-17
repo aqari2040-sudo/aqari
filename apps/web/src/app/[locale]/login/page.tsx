@@ -68,9 +68,22 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
     setOtpSent(false);
   };
 
+  const otherLocale = locale === 'ar' ? 'en' : 'ar';
+  const otherLocaleLabel = locale === 'ar' ? 'English' : 'العربية';
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#F5F1EA] p-4">
       <div className="w-full max-w-[380px]">
+        {/* Language switcher */}
+        <div className="mb-4 flex justify-end">
+          <button
+            onClick={() => router.replace(`/${otherLocale}/login`)}
+            className="rounded-full border border-black/[0.08] bg-white px-4 py-1.5 text-[13px] font-medium text-[#2C2C2A] hover:bg-white/80 transition-colors"
+          >
+            {otherLocaleLabel}
+          </button>
+        </div>
+
         <div className="rounded-xl border border-black/[0.08] bg-white px-7 py-8">
           {/* Brand */}
           <div className="mb-7 flex flex-col items-center">
