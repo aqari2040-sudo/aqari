@@ -41,13 +41,14 @@ export default function MaintenanceDetailPage({
     },
   });
 
-  const { data: costs } = useQuery({
+  const { data: costsRaw } = useQuery({
     queryKey: ['maintenance-costs', id],
     queryFn: async () => {
       const res = await apiClient.get(`/maintenance/${id}/costs`);
-      return res.data || [];
+      return res.data;
     },
   });
+  const costs = Array.isArray(costsRaw) ? costsRaw : (costsRaw?.data || costsRaw?.costs || []);
 
   // Override duplicate
   const overrideMutation = useMutation({
