@@ -28,13 +28,11 @@ export default function UploadReceiptPage({ params: { locale } }: { params: { lo
   const { data: schedules } = useQuery({
     queryKey: ['pending-schedules'],
     queryFn: async () => {
-      const [res1, res2, res3] = await Promise.all([
-        apiClient.get('/payments/schedules', { params: { status: 'pending', limit: 100 } }),
-        apiClient.get('/payments/schedules', { params: { status: 'partial', limit: 100 } }),
-        apiClient.get('/payments/schedules', { params: { status: 'overdue', limit: 100 } }),
-      ]);
-      const extract = (r: any) => Array.isArray(r.data) ? r.data : (r.data?.data || []);
-      return [...extract(res1), ...extract(res2), ...extract(res3)];
+      // Fetch all non-paid schedules
+      const res = await apiClient.get('/payments/schedules', { params: { limit: 100 } });
+      const all = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      // Filter out paid and cancelled on the client side
+      return all.filter((s: any) => s.status !== 'paid' && s.status !== 'cancelled');
     },
   });
 
