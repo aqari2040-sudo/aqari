@@ -15,7 +15,7 @@ export class AnalyticsController {
   @Roles('owner')
   @ApiOperation({ summary: 'Generate AI-powered insights from all property data' })
   @ApiResponse({ status: 200, description: 'AI insights generated successfully' })
-  getInsights() {
+  getInsights(): Promise<any> {
     return this.analyticsService.getInsights();
   }
 }

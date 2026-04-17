@@ -161,7 +161,7 @@ export class AnalyticsService {
     const openMaintenanceRequests = await this.prisma.maintenanceRequest.count({
       where: {
         deleted_at: null,
-        status: { in: ['pending', 'in_progress'] },
+        status: { in: ['submitted', 'in_progress'] as any },
       },
     });
 
