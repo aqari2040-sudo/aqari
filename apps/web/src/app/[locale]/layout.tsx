@@ -8,6 +8,10 @@ import '../globals.css';
 export const metadata: Metadata = {
   title: 'Aqari — Property Management',
   description: 'Real Estate Property Management System',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/icon.png',
+  },
 };
 
 export default async function RootLayout({
