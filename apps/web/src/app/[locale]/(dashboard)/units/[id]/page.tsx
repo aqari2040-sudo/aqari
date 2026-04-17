@@ -11,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { CurrencyDisplay } from '@/components/shared/currency-display';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
+import { PageSpinner } from '@/components/shared/spinner';
 import { useAuthStore } from '@/stores/auth-store';
 
 export default function UnitDetailPage({
@@ -53,7 +54,7 @@ export default function UnitDetailPage({
   });
 
   if (isLoading) {
-    return <div className="flex h-64 items-center justify-center text-muted-foreground">{tc('loading')}</div>;
+    return <PageSpinner />;
   }
 
   if (!unit) return null;

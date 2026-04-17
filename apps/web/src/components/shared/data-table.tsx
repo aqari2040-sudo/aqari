@@ -88,8 +88,10 @@ export function DataTable<T extends Record<string, any>>({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-12 text-center text-muted-foreground">
-                  {t('loading')}
+                <td colSpan={columns.length} className="px-4 py-12 text-center">
+                  <div className="flex justify-center">
+                    <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-sheen-gold/30 border-t-sheen-gold" />
+                  </div>
                 </td>
               </tr>
             ) : data.length === 0 ? (

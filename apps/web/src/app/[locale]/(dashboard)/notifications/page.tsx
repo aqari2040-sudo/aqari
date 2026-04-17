@@ -8,6 +8,7 @@ import { Bell, Check } from 'lucide-react';
 import apiClient from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { PageSpinner } from '@/components/shared/spinner';
 import { usePagination } from '@/hooks/use-pagination';
 
 const typeIcons: Record<string, string> = {
@@ -106,7 +107,7 @@ export default function NotificationsPage({ params: { locale } }: { params: { lo
       </div>
 
       {isLoading ? (
-        <p className="py-8 text-center text-muted-foreground">{t('loading')}</p>
+        <PageSpinner />
       ) : notifications.length === 0 ? (
         <p className="py-8 text-center text-muted-foreground">No notifications</p>
       ) : (

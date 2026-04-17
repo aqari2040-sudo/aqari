@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { CurrencyDisplay } from '@/components/shared/currency-display';
+import { PageSpinner } from '@/components/shared/spinner';
 import { useAuthStore } from '@/stores/auth-store';
 
 export default function MaintenanceDetailPage({
@@ -107,7 +108,7 @@ export default function MaintenanceDetailPage({
   });
 
   if (isLoading) {
-    return <div className="flex h-64 items-center justify-center text-muted-foreground">{tc('loading')}</div>;
+    return <PageSpinner />;
   }
 
   if (!request) return null;

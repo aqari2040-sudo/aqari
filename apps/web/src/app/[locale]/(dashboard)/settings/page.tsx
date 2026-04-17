@@ -8,6 +8,7 @@ import apiClient from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PageSpinner } from '@/components/shared/spinner';
 
 const settingLabels: Record<string, { label: string; description: string; type: 'number' }> = {
   duplicate_maintenance_window_days: {
@@ -82,7 +83,7 @@ export default function SettingsPage() {
   });
 
   if (isLoading) {
-    return <div className="flex h-64 items-center justify-center text-muted-foreground">{tc('loading')}</div>;
+    return <PageSpinner />;
   }
 
   return (
