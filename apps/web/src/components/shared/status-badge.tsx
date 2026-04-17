@@ -3,8 +3,8 @@
 import { Badge } from '@/components/ui/badge';
 
 const statusConfig: Record<string, { variant: 'default' | 'success' | 'warning' | 'destructive' | 'secondary' | 'outline'; label: string; label_ar: string }> = {
-  occupied: { variant: 'success', label: 'Occupied', label_ar: 'مشغول' },
-  vacant: { variant: 'warning', label: 'Vacant', label_ar: 'شاغر' },
+  occupied: { variant: 'success', label: 'Occupied', label_ar: 'مؤجرة' },
+  vacant: { variant: 'warning', label: 'Vacant', label_ar: 'غير مؤجرة' },
   under_maintenance: { variant: 'destructive', label: 'Under Maintenance', label_ar: 'تحت الصيانة' },
   active: { variant: 'success', label: 'Active', label_ar: 'نشط' },
   expired: { variant: 'secondary', label: 'Expired', label_ar: 'منتهي' },

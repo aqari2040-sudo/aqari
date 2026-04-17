@@ -16,7 +16,7 @@ interface Message {
 // ─── Quick question chips — bilingual pairs ────────────────────────────────────
 
 const QUICK_QUESTIONS = [
-  { en: "What's my occupancy rate?", ar: 'ما نسبة الإشغال؟' },
+  { en: "What's my occupancy rate?", ar: 'ما نسبة التأجير؟' },
   { en: 'Which tenants are overdue?', ar: 'من المستأجرون المتأخرون؟' },
   { en: 'Analyze maintenance costs', ar: 'حلل تكاليف الصيانة' },
   { en: 'Revenue forecast', ar: 'توقعات الإيرادات' },
