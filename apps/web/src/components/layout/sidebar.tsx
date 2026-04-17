@@ -17,6 +17,7 @@ import {
   ScrollText,
   Settings,
   Bell,
+  Brain,
 } from 'lucide-react';
 
 interface NavItem {
@@ -35,6 +36,7 @@ const navItems: NavItem[] = [
   { key: 'payments', href: '/payments', icon: CreditCard, roles: ['owner', 'employee', 'tenant'] },
   { key: 'maintenance', href: '/maintenance', icon: Wrench, roles: ['owner', 'employee', 'tenant'] },
   { key: 'notifications', href: '/notifications', icon: Bell, roles: ['owner', 'employee', 'tenant'] },
+  { key: 'analytics', href: '/analytics', icon: Brain, roles: ['owner'] },
   { key: 'reports', href: '/reports', icon: BarChart3, roles: ['owner'] },
   { key: 'audit_log', href: '/audit', icon: ScrollText, roles: ['owner'] },
   { key: 'settings', href: '/settings', icon: Settings, roles: ['owner'] },
