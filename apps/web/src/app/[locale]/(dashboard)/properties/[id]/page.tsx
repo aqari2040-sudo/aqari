@@ -144,8 +144,8 @@ export default function PropertyDetailPage({
 
       <DataTable
         columns={unitColumns}
-        data={unitsData || []}
-        total={unitsData?.length || 0}
+        data={Array.isArray(unitsData) ? unitsData : (unitsData?.data || [])}
+        total={Array.isArray(unitsData) ? unitsData.length : (unitsData?.meta?.total || unitsData?.data?.length || 0)}
         onRowClick={(item) => router.push(`/${locale}/units/${item.id}`)}
       />
 
