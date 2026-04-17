@@ -18,6 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
+import { OcrService } from './ocr.service';
 import { UploadReceiptDto } from './dto/upload-receipt.dto';
 import { ConfirmPaymentDto } from './dto/confirm-payment.dto';
 import { RejectPaymentDto } from './dto/reject-payment.dto';
@@ -32,7 +33,19 @@ import {
 @ApiBearerAuth()
 @Controller('payments')
 export class PaymentsController {
-  constructor(private readonly paymentsService: PaymentsService) {}
+  constructor(
+    private readonly paymentsService: PaymentsService,
+    private readonly ocrService: OcrService,
+  ) {}
+
+  // ─── POST /payments/scan ──────────────────────────────────────
+  // Scan a receipt image with AI without creating a payment
+  @Post('scan')
+  @Roles('owner', 'employee', 'tenant')
+  @ApiOperation({ summary: 'Scan receipt image with AI to extract amount and date' })
+  async scanReceipt(@Body() body: { image_url: string }) {
+    return this.ocrService.extractFromReceipt(body.image_url);
+  }
 
   // ─── GET /payments ───────────────────────────────────────────
 

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
-import { Upload } from 'lucide-react';
+import { Upload, Scan } from 'lucide-react';
 import apiClient from '@/lib/api-client';
 import { formatDate } from '@aqari/shared';
 import { Button } from '@/components/ui/button';
@@ -127,10 +127,16 @@ export default function PaymentsPage({ params: { locale } }: { params: { locale:
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <Button onClick={() => router.push(`/${locale}/payments/upload`)}>
-          <Upload className="me-2 h-4 w-4" />
-          {t('upload_receipt')}
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => router.push(`/${locale}/payments/scan`)}>
+            <Scan className="me-2 h-4 w-4" />
+            {locale === 'ar' ? 'مسح بالذكاء الاصطناعي' : 'Scan with AI'}
+          </Button>
+          <Button onClick={() => router.push(`/${locale}/payments/upload`)}>
+            <Upload className="me-2 h-4 w-4" />
+            {t('upload_receipt')}
+          </Button>
+        </div>
       </div>
 
       {/* Tabs */}
