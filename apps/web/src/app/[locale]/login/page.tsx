@@ -100,10 +100,10 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
     <div className="flex min-h-screen items-center justify-center bg-sheen-cream p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="mb-8 text-center">
-          <h1 className="font-display text-4xl font-bold text-sheen-black">Aqari</h1>
-          <p className="mt-1 font-arabic text-lg text-sheen-muted">عقاري</p>
-          <p className="mt-2 text-sm text-sheen-muted">Property Management System</p>
+        <div className="mb-8 flex flex-col items-center text-center">
+          <img src="/logo.png" alt="Aqari" className="mb-4 h-20 w-20" />
+          <h1 className="font-display text-3xl font-bold text-sheen-black">Aqari</h1>
+          <p className="mt-1 text-sm text-sheen-muted">Property Management System</p>
         </div>
 
         {/* Card */}

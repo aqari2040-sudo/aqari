@@ -52,10 +52,13 @@ export function Sidebar({ locale }: { locale: string }) {
   return (
     <aside className="flex h-screen w-60 flex-col bg-sheen-black">
       {/* Logo */}
-      <div className="flex h-16 items-center justify-center border-b border-white/10">
-        <Link href={`/${locale}/dashboard`} className="flex items-center gap-2">
-          <span className="font-display text-2xl font-bold text-sheen-gold">Aqari</span>
-          <span className="font-arabic text-sm text-sheen-cream/60">عقاري</span>
+      <div className="flex h-20 items-center justify-center border-b border-white/10 px-4">
+        <Link href={`/${locale}/dashboard`} className="flex items-center gap-3">
+          <img src="/logo.png" alt="Aqari" className="h-10 w-10 brightness-0 invert" />
+          <div>
+            <span className="font-display text-xl font-bold text-sheen-gold">Aqari</span>
+            <span className="block text-xs text-sheen-cream/50">عقاري</span>
+          </div>
         </Link>
       </div>
 
