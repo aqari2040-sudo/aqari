@@ -141,8 +141,8 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@company.com"
-                dir="ltr"
                 className="mb-4 h-12 w-full rounded-lg border border-black/[0.08] bg-white px-4 text-base text-[#2C2C2A] outline-none transition-all placeholder:text-[#888780] focus:border-[#2C2C2A] focus:ring-[3px] focus:ring-black/[0.06]"
+                style={{ textAlign: isAr ? 'right' : 'left', direction: 'ltr' }}
               />
 
               <label className="mb-2 block text-sm font-medium text-[#2C2C2A]">{t('password')}</label>
@@ -152,8 +152,8 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  dir="ltr"
                   className="h-12 w-full rounded-lg border border-black/[0.08] bg-white px-4 pe-12 text-base text-[#2C2C2A] outline-none transition-all placeholder:text-[#888780] focus:border-[#2C2C2A] focus:ring-[3px] focus:ring-black/[0.06]"
+                  style={{ textAlign: isAr ? 'right' : 'left', direction: 'ltr' }}
                 />
                 <button
                   type="button"
