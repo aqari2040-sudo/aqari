@@ -347,14 +347,16 @@ export class PaymentsService {
     year?: number;
     page?: number;
     limit?: number;
+    tenant_id?: string;
   }) {
-    const { contract_id, status, month, year, page = 1, limit = 20 } = query;
+    const { contract_id, status, month, year, page = 1, limit = 20, tenant_id } = query;
     const skip = (page - 1) * limit;
 
     const where: any = {};
 
     if (contract_id) where.contract_id = contract_id;
     if (status) where.status = status;
+    if (tenant_id) where.contract = { tenant_id };
 
     if (year !== undefined) {
       const startOfYear = new Date(year, month !== undefined ? month - 1 : 0, 1);

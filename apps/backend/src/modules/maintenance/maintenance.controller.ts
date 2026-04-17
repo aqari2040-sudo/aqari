@@ -60,7 +60,7 @@ export class MaintenanceController {
   // ─── List Requests ─────────────────────────────────────────────────────────
 
   @Get()
-  @Roles('owner', 'employee')
+  @Roles('owner', 'employee', 'tenant')
   @ApiOperation({
     summary:
       'List maintenance requests with filters (unit_id, status, category_id, priority, date range)',

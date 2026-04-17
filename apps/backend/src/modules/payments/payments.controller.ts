@@ -60,7 +60,7 @@ export class PaymentsController {
   // ─── GET /payments/schedules ─────────────────────────────────
 
   @Get('schedules')
-  @Roles('owner', 'employee')
+  @Roles('owner', 'employee', 'tenant')
   @ApiOperation({
     summary: 'List payment schedules with filters: contract_id, status, month, year',
   })
@@ -76,6 +76,7 @@ export class PaymentsController {
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiResponse({ status: 200, description: 'Paginated list of payment schedules' })
   findAllSchedules(
+    @CurrentUser() user: AuthUser,
     @Query('contract_id') contract_id?: string,
     @Query('status') status?: string,
     @Query('month') month?: string,
@@ -90,6 +91,7 @@ export class PaymentsController {
       year: year ? parseInt(year, 10) : undefined,
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
+      tenant_id: user.role === 'tenant' ? user.tenant_id : undefined,
     });
   }
 
