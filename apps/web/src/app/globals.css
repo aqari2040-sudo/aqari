@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,24 +6,33 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* SheenCafe-inspired Aqari theme */
+    --sheen-black: #1A1A1A;
+    --sheen-cream: #F5F0E8;
+    --sheen-brown: #8B4513;
+    --sheen-gold: #D4A843;
+    --sheen-white: #FFFFFF;
+    --sheen-muted: #A0785A;
+
+    /* shadcn/ui variables mapped to Sheen palette */
+    --background: 36 33% 94%; /* cream */
+    --foreground: 0 0% 10%; /* near black */
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 0 0% 10%;
+    --primary: 28 75% 30%; /* brown */
+    --primary-foreground: 36 33% 94%;
+    --secondary: 36 33% 94%; /* cream */
+    --secondary-foreground: 0 0% 10%;
+    --muted: 30 25% 90%;
+    --muted-foreground: 25 28% 49%; /* muted brown */
+    --accent: 38 55% 55%; /* gold */
+    --accent-foreground: 0 0% 10%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --destructive-foreground: 0 0% 100%;
+    --border: 36 25% 88%;
+    --input: 36 25% 88%;
+    --ring: 38 55% 55%; /* gold ring */
+    --radius: 0.75rem;
   }
 }
 
@@ -38,9 +47,28 @@
 
 /* RTL-specific adjustments */
 [dir='rtl'] {
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', 'DM Sans', sans-serif;
 }
 
 [dir='ltr'] {
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--sheen-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sheen-muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sheen-brown);
 }

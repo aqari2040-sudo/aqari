@@ -97,124 +97,133 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted p-4">
-      <div className="w-full max-w-md rounded-lg border bg-card p-8 shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-sheen-cream p-4">
+      <div className="w-full max-w-md">
+        {/* Logo */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-primary">Aqari</h1>
-          <p className="mt-2 text-muted-foreground">عقاري</p>
+          <h1 className="font-display text-4xl font-bold text-sheen-black">Aqari</h1>
+          <p className="mt-1 font-arabic text-lg text-sheen-muted">عقاري</p>
+          <p className="mt-2 text-sm text-sheen-muted">Property Management System</p>
         </div>
 
-        {/* Mode toggle */}
-        <div className="mb-6 flex gap-2">
-          <button
-            onClick={() => { setMode('email'); setError(''); }}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-              mode === 'email'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-            }`}
-          >
-            {t('login_with_email')}
-          </button>
-          <button
-            onClick={() => { setMode('phone'); setError(''); setOtpSent(false); }}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-              mode === 'phone'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-            }`}
-          >
-            {t('login_with_phone')}
-          </button>
-        </div>
-
-        {error && (
-          <div className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-            {error}
-          </div>
-        )}
-
-        {mode === 'email' ? (
-          <form onSubmit={handleEmailLogin} className="space-y-4">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">{t('email')}</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none ring-ring focus:ring-2"
-                placeholder="admin@aqari.com"
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">{t('password')}</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none ring-ring focus:ring-2"
-              />
-            </div>
+        {/* Card */}
+        <div className="rounded-xl border border-sheen-cream bg-white p-8 shadow-sm">
+          {/* Mode toggle */}
+          <div className="mb-6 flex gap-2">
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              onClick={() => { setMode('email'); setError(''); }}
+              className={`flex-1 rounded-full px-4 py-2.5 text-sm font-medium transition-all ${
+                mode === 'email'
+                  ? 'bg-sheen-brown text-white'
+                  : 'border border-sheen-muted/30 bg-white text-sheen-muted hover:text-sheen-black'
+              }`}
             >
-              {loading ? '...' : t('login')}
+              {t('login_with_email')}
             </button>
-          </form>
-        ) : (
-          <form onSubmit={handleVerifyOtp} className="space-y-4">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">{t('phone')}</label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-                disabled={otpSent}
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none ring-ring focus:ring-2 disabled:opacity-50"
-                placeholder="+971501234567"
-                dir="ltr"
-              />
-            </div>
+            <button
+              onClick={() => { setMode('phone'); setError(''); setOtpSent(false); }}
+              className={`flex-1 rounded-full px-4 py-2.5 text-sm font-medium transition-all ${
+                mode === 'phone'
+                  ? 'bg-sheen-brown text-white'
+                  : 'border border-sheen-muted/30 bg-white text-sheen-muted hover:text-sheen-black'
+              }`}
+            >
+              {t('login_with_phone')}
+            </button>
+          </div>
 
-            {!otpSent ? (
+          {error && (
+            <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-100">
+              {error}
+            </div>
+          )}
+
+          {mode === 'email' ? (
+            <form onSubmit={handleEmailLogin} className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-sheen-black">{t('email')}</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full rounded-lg border border-sheen-muted/30 bg-white px-4 py-3 text-sm text-sheen-black outline-none transition-all placeholder:text-sheen-muted/60 focus:border-sheen-gold focus:ring-2 focus:ring-sheen-gold/20"
+                  placeholder="admin@aqari.com"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-sheen-black">{t('password')}</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full rounded-lg border border-sheen-muted/30 bg-white px-4 py-3 text-sm text-sheen-black outline-none transition-all placeholder:text-sheen-muted/60 focus:border-sheen-gold focus:ring-2 focus:ring-sheen-gold/20"
+                />
+              </div>
               <button
-                type="button"
-                onClick={handleSendOtp}
-                disabled={loading || !phone}
-                className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-lg bg-sheen-brown px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-sheen-brown/90 disabled:opacity-50"
               >
-                {loading ? '...' : t('send_otp')}
+                {loading ? '...' : t('login')}
               </button>
-            ) : (
-              <>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium">{t('otp')}</label>
-                  <input
-                    type="text"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    required
-                    maxLength={6}
-                    className="w-full rounded-md border bg-background px-3 py-2 text-center text-lg tracking-widest outline-none ring-ring focus:ring-2"
-                    dir="ltr"
-                  />
-                </div>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-sheen-black">{t('phone')}</label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                  disabled={otpSent}
+                  className="w-full rounded-lg border border-sheen-muted/30 bg-white px-4 py-3 text-sm text-sheen-black outline-none transition-all placeholder:text-sheen-muted/60 focus:border-sheen-gold focus:ring-2 focus:ring-sheen-gold/20 disabled:opacity-50"
+                  placeholder="+971501234567"
+                  dir="ltr"
+                />
+              </div>
+
+              {!otpSent ? (
                 <button
-                  type="submit"
-                  disabled={loading || otp.length < 6}
-                  className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                  type="button"
+                  onClick={handleSendOtp}
+                  disabled={loading || !phone}
+                  className="w-full rounded-lg bg-sheen-brown px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-sheen-brown/90 disabled:opacity-50"
                 >
-                  {loading ? '...' : t('verify')}
+                  {loading ? '...' : t('send_otp')}
                 </button>
-              </>
-            )}
-          </form>
-        )}
+              ) : (
+                <>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-sheen-black">{t('otp')}</label>
+                    <input
+                      type="text"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      required
+                      maxLength={6}
+                      className="w-full rounded-lg border border-sheen-muted/30 bg-white px-4 py-3 text-center text-lg tracking-widest text-sheen-black outline-none transition-all focus:border-sheen-gold focus:ring-2 focus:ring-sheen-gold/20"
+                      dir="ltr"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading || otp.length < 6}
+                    className="w-full rounded-lg bg-sheen-brown px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-sheen-brown/90 disabled:opacity-50"
+                  >
+                    {loading ? '...' : t('verify')}
+                  </button>
+                </>
+              )}
+            </form>
+          )}
+        </div>
+
+        <p className="mt-6 text-center text-xs text-sheen-muted">
+          Aqari Property Management System
+        </p>
       </div>
     </div>
   );

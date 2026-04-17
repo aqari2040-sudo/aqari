@@ -13,6 +13,16 @@ const config: Config = {
     },
     extend: {
       colors: {
+        // SheenCafe theme colors
+        sheen: {
+          black: '#1A1A1A',
+          cream: '#F5F0E8',
+          brown: '#8B4513',
+          gold: '#D4A843',
+          white: '#FFFFFF',
+          muted: '#A0785A',
+        },
+        // shadcn/ui mapped colors
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -49,8 +59,10 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        arabic: ['IBM Plex Sans Arabic', 'sans-serif'],
+        display: ['Playfair Display', 'serif'],
+        body: ['DM Sans', 'sans-serif'],
+        sans: ['DM Sans', 'sans-serif'],
+        arabic: ['IBM Plex Sans Arabic', 'DM Sans', 'sans-serif'],
       },
     },
   },
