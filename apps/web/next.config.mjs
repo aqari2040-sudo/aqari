@@ -1,5 +1,8 @@
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import createNextIntlPlugin from 'next-intl/plugin';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const securityHeaders = [
@@ -20,6 +23,10 @@ const nextConfig = {
     return [{ source: '/(.*)', headers: securityHeaders }];
   },
   transpilePackages: ['@aqari/shared'],
+  webpack: (config) => {
+    config.resolve.alias['@'] = resolve(__dirname, 'src');
+    return config;
+  },
 };
 
 export default withNextIntl(nextConfig);
