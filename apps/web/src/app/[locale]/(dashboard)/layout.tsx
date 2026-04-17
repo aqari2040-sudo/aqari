@@ -52,15 +52,17 @@ export default function DashboardLayout({
 
       {/* Sidebar — mobile overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <>
+          {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/50"
+            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
-          <div className="relative z-10">
+          {/* Sliding sidebar */}
+          <div className="fixed inset-y-0 start-0 z-50 lg:hidden">
             <Sidebar locale={locale} />
           </div>
-        </div>
+        </>
       )}
 
       {/* Main content */}
