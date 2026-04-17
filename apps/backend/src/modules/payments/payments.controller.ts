@@ -37,13 +37,16 @@ export class PaymentsController {
   // ─── GET /payments ───────────────────────────────────────────
 
   @Get()
-  @Roles('owner', 'employee')
+  @Roles('owner', 'employee', 'tenant')
   @ApiOperation({
     summary: 'List payments with filters: status, tenant, unit, date range',
   })
   @ApiResponse({ status: 200, description: 'Paginated list of payments' })
-  findAll(@Query() query: QueryPaymentDto) {
-    return this.paymentsService.findAll(query);
+  findAll(@Query() query: QueryPaymentDto, @CurrentUser() user: AuthUser) {
+    return this.paymentsService.findAll({
+      ...query,
+      tenant_id: user.role === 'tenant' ? user.tenant_id : query.tenant_id,
+    });
   }
 
   // ─── GET /payments/overdue ───────────────────────────────────
