@@ -12,29 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 type ReportType = 'occupancy' | 'payments' | 'maintenance';
 type Format = 'pdf' | 'excel';
 
-const reportConfigs: Record<ReportType, { icon: any; title: string; title_ar: string; description: string }> = {
-  occupancy: {
-    icon: Building2,
-    title: 'Occupancy Report',
-    title_ar: 'تقرير الإشغال',
-    description: 'Unit occupancy status across all properties with tenant details.',
-  },
-  payments: {
-    icon: CreditCard,
-    title: 'Payments Report',
-    title_ar: 'تقرير المدفوعات',
-    description: 'Payment schedules, collected amounts, and overdue balances.',
-  },
-  maintenance: {
-    icon: Wrench,
-    title: 'Maintenance Report',
-    title_ar: 'تقرير الصيانة',
-    description: 'Maintenance requests, costs by category, and approval status.',
-  },
-};
-
 export default function ReportsPage({ params: { locale } }: { params: { locale: string } }) {
-  const tc = useTranslations('common');
+  const t = useTranslations('reports');
   const [selectedReport, setSelectedReport] = useState<ReportType | null>(null);
   const [format, setFormat] = useState<Format>('excel');
   const [lang, setLang] = useState<'en' | 'ar'>(locale as 'en' | 'ar');
@@ -42,6 +21,12 @@ export default function ReportsPage({ params: { locale } }: { params: { locale: 
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [downloading, setDownloading] = useState(false);
+
+  const reportConfigs: Record<ReportType, { icon: any; title: string; description: string }> = {
+    occupancy: { icon: Building2, title: t('occupancy_report'), description: t('occupancy_desc') },
+    payments: { icon: CreditCard, title: t('payments_report'), description: t('payments_desc') },
+    maintenance: { icon: Wrench, title: t('maintenance_report'), description: t('maintenance_desc') },
+  };
 
   const { data: properties } = useQuery({
     queryKey: ['properties-list'],
@@ -66,7 +51,6 @@ export default function ReportsPage({ params: { locale } }: { params: { locale: 
         responseType: 'blob',
       });
 
-      // Create download link
       const blob = new Blob([res.data], {
         type: format === 'excel'
           ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -91,7 +75,7 @@ export default function ReportsPage({ params: { locale } }: { params: { locale: 
     <div className="mx-auto max-w-3xl">
       <div className="mb-6 flex items-center gap-3">
         <FileDown className="h-6 w-6 text-primary" />
-        <h1 className="text-2xl font-bold">Reports</h1>
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
       </div>
 
       {/* Report type selection */}
@@ -110,9 +94,7 @@ export default function ReportsPage({ params: { locale } }: { params: { locale: 
               >
                 <CardContent className="flex flex-col items-center p-6 text-center">
                   <Icon className={`mb-3 h-8 w-8 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <h3 className="text-sm font-semibold">
-                    {locale === 'ar' ? config.title_ar : config.title}
-                  </h3>
+                  <h3 className="text-sm font-semibold">{config.title}</h3>
                   <p className="mt-1 text-xs text-muted-foreground">{config.description}</p>
                 </CardContent>
               </Card>
@@ -125,17 +107,12 @@ export default function ReportsPage({ params: { locale } }: { params: { locale: 
       {selectedReport && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">
-              {locale === 'ar'
-                ? reportConfigs[selectedReport].title_ar
-                : reportConfigs[selectedReport].title}
-            </CardTitle>
+            <CardTitle className="text-lg">{reportConfigs[selectedReport].title}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Format + Language */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1.5 block text-sm font-medium">Format</label>
+                <label className="mb-1.5 block text-sm font-medium">{t('format')}</label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setFormat('excel')}
@@ -158,7 +135,7 @@ export default function ReportsPage({ params: { locale } }: { params: { locale: 
                 </div>
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium">Language</label>
+                <label className="mb-1.5 block text-sm font-medium">{t('language')}</label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setLang('en')}
@@ -182,13 +159,13 @@ export default function ReportsPage({ params: { locale } }: { params: { locale: 
 
             {/* Property filter */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium">Property (optional)</label>
+              <label className="mb-1.5 block text-sm font-medium">{t('property_optional')}</label>
               <select
                 value={propertyId}
                 onChange={(e) => setPropertyId(e.target.value)}
                 className="h-10 w-full rounded-md border bg-background px-3 text-sm"
               >
-                <option value="">All Properties</option>
+                <option value="">{t('all_properties')}</option>
                 {(properties || []).map((p: any) => (
                   <option key={p.id} value={p.id}>
                     {locale === 'ar' ? p.name_ar : p.name}
@@ -197,42 +174,29 @@ export default function ReportsPage({ params: { locale } }: { params: { locale: 
               </select>
             </div>
 
-            {/* Date range (for payments and maintenance) */}
+            {/* Date range */}
             {selectedReport !== 'occupancy' && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium">From</label>
-                  <Input
-                    type="date"
-                    value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
-                  />
+                  <label className="mb-1.5 block text-sm font-medium">{t('from')}</label>
+                  <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium">To</label>
-                  <Input
-                    type="date"
-                    value={dateTo}
-                    onChange={(e) => setDateTo(e.target.value)}
-                  />
+                  <label className="mb-1.5 block text-sm font-medium">{t('to')}</label>
+                  <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
                 </div>
               </div>
             )}
 
             {/* Download button */}
             <div className="pt-2">
-              <Button
-                onClick={handleDownload}
-                disabled={downloading}
-                className="w-full"
-                size="lg"
-              >
+              <Button onClick={handleDownload} disabled={downloading} className="w-full" size="lg">
                 {downloading ? (
-                  'Generating...'
+                  t('generating')
                 ) : (
                   <>
                     <FileDown className="me-2 h-4 w-4" />
-                    Download {format === 'excel' ? 'Excel' : 'PDF'} Report
+                    {format === 'excel' ? t('download_excel') : t('download_pdf')}
                   </>
                 )}
               </Button>

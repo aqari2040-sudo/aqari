@@ -67,7 +67,14 @@
     "alerts": "التنبيهات",
     "expiring_contracts": "عقود قاربت على الانتهاء",
     "suspicious_costs": "تكاليف مشبوهة",
-    "recurring_issues": "مشاكل متكررة"
+    "recurring_issues": "مشاكل متكررة",
+    "maintenance_by_category": "تكاليف الصيانة حسب الفئة",
+    "active_alerts": "تنبيهات نشطة",
+    "no_active_alerts": "لا توجد تنبيهات نشطة",
+    "no_maintenance_data": "لا توجد بيانات صيانة هذا الشهر",
+    "total_units": "الإجمالي: {count} وحدة",
+    "days_left": "{days} يوم متبقي",
+    "days_overdue": "{days} يوم"
   },
   "properties": {
     "title": "العقارات",
@@ -150,5 +157,23 @@
     "grace_period": "فترة السماح (أيام)",
     "upload_document": "رفع وثيقة العقد",
     "expiring_soon": "تنتهي قريباً"
+  },
+  "reports": {
+    "title": "التقارير",
+    "occupancy_report": "تقرير الإشغال",
+    "occupancy_desc": "حالة إشغال الوحدات في جميع العقارات مع تفاصيل المستأجرين.",
+    "payments_report": "تقرير المدفوعات",
+    "payments_desc": "جداول الدفع والمبالغ المحصلة والأرصدة المتأخرة.",
+    "maintenance_report": "تقرير الصيانة",
+    "maintenance_desc": "طلبات الصيانة والتكاليف حسب الفئة وحالة الموافقة.",
+    "format": "الصيغة",
+    "language": "اللغة",
+    "property_optional": "العقار (اختياري)",
+    "all_properties": "جميع العقارات",
+    "from": "من",
+    "to": "إلى",
+    "generating": "جاري الإنشاء...",
+    "download_excel": "تحميل تقرير Excel",
+    "download_pdf": "تحميل تقرير PDF"
   }
 }

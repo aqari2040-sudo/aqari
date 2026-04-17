@@ -137,7 +137,7 @@ export default function DashboardPage({ params: { locale } }: { params: { locale
             <div className={`text-3xl font-bold ${totalAlerts > 0 ? 'text-yellow-600' : ''}`}>
               {totalAlerts}
             </div>
-            <p className="text-xs text-muted-foreground">active alerts</p>
+            <p className="text-xs text-muted-foreground">{t('active_alerts')}</p>
           </CardContent>
         </Card>
       </div>
@@ -176,7 +176,7 @@ export default function DashboardPage({ params: { locale } }: { params: { locale
                     </div>
                   ))}
                   <div className="pt-1 text-xs text-muted-foreground">
-                    Total: {occupancy?.total_units} units
+                    {t('total_units', { count: occupancy?.total_units || 0 })}
                   </div>
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function DashboardPage({ params: { locale } }: { params: { locale
         {/* Maintenance cost by category */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Maintenance Cost by Category</CardTitle>
+            <CardTitle className="text-base">{t('maintenance_by_category')}</CardTitle>
           </CardHeader>
           <CardContent>
             {categoryBarData.length > 0 ? (
@@ -204,7 +204,7 @@ export default function DashboardPage({ params: { locale } }: { params: { locale
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <p className="py-8 text-center text-sm text-muted-foreground">No maintenance data this month</p>
+              <p className="py-8 text-center text-sm text-muted-foreground">{t('no_maintenance_data')}</p>
             )}
           </CardContent>
         </Card>
@@ -262,7 +262,7 @@ export default function DashboardPage({ params: { locale } }: { params: { locale
           </CardHeader>
           <CardContent>
             {totalAlerts === 0 ? (
-              <p className="py-4 text-center text-sm text-muted-foreground">No active alerts</p>
+              <p className="py-4 text-center text-sm text-muted-foreground">{t('no_active_alerts')}</p>
             ) : (
               <div className="space-y-3 max-h-[300px] overflow-y-auto">
                 {/* Expiring contracts */}

@@ -67,7 +67,14 @@
     "alerts": "Alerts",
     "expiring_contracts": "Expiring Contracts",
     "suspicious_costs": "Suspicious Costs",
-    "recurring_issues": "Recurring Issues"
+    "recurring_issues": "Recurring Issues",
+    "maintenance_by_category": "Maintenance Cost by Category",
+    "active_alerts": "active alerts",
+    "no_active_alerts": "No active alerts",
+    "no_maintenance_data": "No maintenance data this month",
+    "total_units": "Total: {count} units",
+    "days_left": "{days}d left",
+    "days_overdue": "{days}d"
   },
   "properties": {
     "title": "Properties",
@@ -150,5 +157,23 @@
     "grace_period": "Grace Period (days)",
     "upload_document": "Upload Contract Document",
     "expiring_soon": "Expiring Soon"
+  },
+  "reports": {
+    "title": "Reports",
+    "occupancy_report": "Occupancy Report",
+    "occupancy_desc": "Unit occupancy status across all properties with tenant details.",
+    "payments_report": "Payments Report",
+    "payments_desc": "Payment schedules, collected amounts, and overdue balances.",
+    "maintenance_report": "Maintenance Report",
+    "maintenance_desc": "Maintenance requests, costs by category, and approval status.",
+    "format": "Format",
+    "language": "Language",
+    "property_optional": "Property (optional)",
+    "all_properties": "All Properties",
+    "from": "From",
+    "to": "To",
+    "generating": "Generating...",
+    "download_excel": "Download Excel Report",
+    "download_pdf": "Download PDF Report"
   }
 }
