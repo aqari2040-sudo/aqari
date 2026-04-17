@@ -7,49 +7,21 @@ import { Settings as SettingsIcon, Save } from 'lucide-react';
 import apiClient from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { PageSpinner } from '@/components/shared/spinner';
 
-const settingLabels: Record<string, { label: string; description: string; type: 'number' }> = {
-  duplicate_maintenance_window_days: {
-    label: 'Duplicate Maintenance Window (days)',
-    description: 'Time window to check for duplicate maintenance requests on the same unit + category.',
-    type: 'number',
-  },
-  ocr_confidence_threshold: {
-    label: 'OCR Confidence Threshold',
-    description: 'Below this value (0-1), receipts are flagged for manual review.',
-    type: 'number',
-  },
-  default_grace_period_days: {
-    label: 'Default Grace Period (days)',
-    description: 'Number of days after due date before a payment is marked overdue.',
-    type: 'number',
-  },
-  recurring_maintenance_threshold: {
-    label: 'Recurring Maintenance Threshold',
-    description: 'Number of requests that triggers a recurring maintenance alert.',
-    type: 'number',
-  },
-  recurring_maintenance_window_days: {
-    label: 'Recurring Maintenance Window (days)',
-    description: 'Time window for counting recurring maintenance requests.',
-    type: 'number',
-  },
-  suspicious_cost_multiplier: {
-    label: 'Suspicious Cost Multiplier',
-    description: 'Flag maintenance costs exceeding this multiple of the unit average.',
-    type: 'number',
-  },
-  max_file_size_mb: {
-    label: 'Max File Upload Size (MB)',
-    description: 'Maximum file size for receipt and document uploads.',
-    type: 'number',
-  },
-};
+const SETTING_KEYS = [
+  'duplicate_maintenance_window_days',
+  'ocr_confidence_threshold',
+  'default_grace_period_days',
+  'recurring_maintenance_threshold',
+  'recurring_maintenance_window_days',
+  'suspicious_cost_multiplier',
+  'max_file_size_mb',
+];
 
 export default function SettingsPage() {
-  const tc = useTranslations('common');
+  const t = useTranslations('settings');
   const queryClient = useQueryClient();
   const [editValues, setEditValues] = useState<Record<string, string>>({});
   const [savedKey, setSavedKey] = useState<string | null>(null);
@@ -90,16 +62,16 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-2xl">
       <div className="mb-6 flex items-center gap-3">
         <SettingsIcon className="h-6 w-6 text-primary" />
-        <h1 className="text-2xl font-bold">Settings</h1>
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
       </div>
 
       <div className="space-y-4">
-        {Object.entries(settingLabels).map(([key, meta]) => (
+        {SETTING_KEYS.map((key) => (
           <Card key={key}>
             <CardContent className="flex items-start justify-between gap-4 p-4">
               <div className="flex-1">
-                <h3 className="text-sm font-medium">{meta.label}</h3>
-                <p className="text-xs text-muted-foreground">{meta.description}</p>
+                <h3 className="text-sm font-medium">{t(`${key}_label`)}</h3>
+                <p className="text-xs text-muted-foreground">{t(`${key}_desc`)}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Input
@@ -116,7 +88,7 @@ export default function SettingsPage() {
                   disabled={updateMutation.isPending}
                 >
                   {savedKey === key ? (
-                    <span className="text-green-600 text-xs">Saved</span>
+                    <span className="text-green-600 text-xs">{t('saved')}</span>
                   ) : (
                     <Save className="h-3.5 w-3.5" />
                   )}

@@ -159,6 +159,24 @@
     "upload_document": "رفع وثيقة العقد",
     "expiring_soon": "تنتهي قريباً"
   },
+  "settings": {
+    "title": "الإعدادات",
+    "saved": "تم الحفظ",
+    "duplicate_maintenance_window_days_label": "فترة اكتشاف الصيانة المكررة (أيام)",
+    "duplicate_maintenance_window_days_desc": "الفترة الزمنية للتحقق من طلبات الصيانة المكررة على نفس الوحدة والفئة.",
+    "ocr_confidence_threshold_label": "حد ثقة قراءة الإيصالات (OCR)",
+    "ocr_confidence_threshold_desc": "عند أقل من هذه القيمة (0-1)، يتم تمييز الإيصالات للمراجعة اليدوية.",
+    "default_grace_period_days_label": "فترة السماح الافتراضية (أيام)",
+    "default_grace_period_days_desc": "عدد الأيام بعد تاريخ الاستحقاق قبل اعتبار الدفعة متأخرة.",
+    "recurring_maintenance_threshold_label": "حد الصيانة المتكررة",
+    "recurring_maintenance_threshold_desc": "عدد الطلبات الذي يطلق تنبيه الصيانة المتكررة.",
+    "recurring_maintenance_window_days_label": "فترة الصيانة المتكررة (أيام)",
+    "recurring_maintenance_window_days_desc": "الفترة الزمنية لاحتساب طلبات الصيانة المتكررة.",
+    "suspicious_cost_multiplier_label": "مضاعف التكلفة المشبوهة",
+    "suspicious_cost_multiplier_desc": "يتم الإشارة إلى تكاليف الصيانة التي تتجاوز هذا المضاعف من متوسط الوحدة.",
+    "max_file_size_mb_label": "الحد الأقصى لحجم الملف (ميغابايت)",
+    "max_file_size_mb_desc": "الحد الأقصى لحجم الملف لرفع الإيصالات والمستندات."
+  },
   "reports": {
     "title": "التقارير",
     "occupancy_report": "تقرير الإشغال",

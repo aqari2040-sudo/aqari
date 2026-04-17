@@ -159,6 +159,24 @@
     "upload_document": "Upload Contract Document",
     "expiring_soon": "Expiring Soon"
   },
+  "settings": {
+    "title": "Settings",
+    "saved": "Saved",
+    "duplicate_maintenance_window_days_label": "Duplicate Maintenance Window (days)",
+    "duplicate_maintenance_window_days_desc": "Time window to check for duplicate maintenance requests on the same unit + category.",
+    "ocr_confidence_threshold_label": "OCR Confidence Threshold",
+    "ocr_confidence_threshold_desc": "Below this value (0-1), receipts are flagged for manual review.",
+    "default_grace_period_days_label": "Default Grace Period (days)",
+    "default_grace_period_days_desc": "Number of days after due date before a payment is marked overdue.",
+    "recurring_maintenance_threshold_label": "Recurring Maintenance Threshold",
+    "recurring_maintenance_threshold_desc": "Number of requests that triggers a recurring maintenance alert.",
+    "recurring_maintenance_window_days_label": "Recurring Maintenance Window (days)",
+    "recurring_maintenance_window_days_desc": "Time window for counting recurring maintenance requests.",
+    "suspicious_cost_multiplier_label": "Suspicious Cost Multiplier",
+    "suspicious_cost_multiplier_desc": "Flag maintenance costs exceeding this multiple of the unit average.",
+    "max_file_size_mb_label": "Max File Upload Size (MB)",
+    "max_file_size_mb_desc": "Maximum file size for receipt and document uploads."
+  },
   "reports": {
     "title": "Reports",
     "occupancy_report": "Occupancy Report",
