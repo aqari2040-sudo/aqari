@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
+import { Plus, Scan } from 'lucide-react';
 import apiClient from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
 import { DataTable, type Column } from '@/components/shared/data-table';
@@ -94,10 +94,16 @@ export default function ContractsPage({ params: { locale } }: { params: { locale
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <Button onClick={() => router.push(`/${locale}/contracts/new`)}>
-          <Plus className="me-2 h-4 w-4" />
-          {t('add')}
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => router.push(`/${locale}/contracts/scan`)}>
+            <Scan className="me-2 h-4 w-4" />
+            {locale === 'ar' ? 'مسح بالذكاء الاصطناعي' : 'Scan with AI'}
+          </Button>
+          <Button onClick={() => router.push(`/${locale}/contracts/new`)}>
+            <Plus className="me-2 h-4 w-4" />
+            {t('add')}
+          </Button>
+        </div>
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-3">

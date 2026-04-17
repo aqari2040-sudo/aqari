@@ -20,7 +20,7 @@ export default function NewContractPage({ params: { locale } }: { params: { loca
     queryKey: ['tenants-list'],
     queryFn: async () => {
       const res = await apiClient.get('/tenants', { params: { limit: 200 } });
-      return res.data?.data || [];
+      return Array.isArray(res.data) ? res.data : (res.data?.data || []);
     },
   });
 
@@ -28,7 +28,7 @@ export default function NewContractPage({ params: { locale } }: { params: { loca
     queryKey: ['units-vacant'],
     queryFn: async () => {
       const res = await apiClient.get('/units', { params: { status: 'vacant', limit: 200 } });
-      return res.data?.data || [];
+      return Array.isArray(res.data) ? res.data : (res.data?.data || []);
     },
   });
 
