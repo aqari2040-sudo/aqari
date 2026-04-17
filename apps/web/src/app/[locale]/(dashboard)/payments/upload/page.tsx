@@ -28,14 +28,13 @@ export default function UploadReceiptPage({ params: { locale } }: { params: { lo
   const { data: schedules } = useQuery({
     queryKey: ['pending-schedules'],
     queryFn: async () => {
-      const res = await apiClient.get('/payments/schedules', {
-        params: { status: 'pending', limit: 100 },
-      });
-      // Also get partial
-      const res2 = await apiClient.get('/payments/schedules', {
-        params: { status: 'partial', limit: 100 },
-      });
-      return [...(res.data?.data || []), ...(res2.data?.data || [])];
+      const [res1, res2, res3] = await Promise.all([
+        apiClient.get('/payments/schedules', { params: { status: 'pending', limit: 100 } }),
+        apiClient.get('/payments/schedules', { params: { status: 'partial', limit: 100 } }),
+        apiClient.get('/payments/schedules', { params: { status: 'overdue', limit: 100 } }),
+      ]);
+      const extract = (r: any) => Array.isArray(r.data) ? r.data : (r.data?.data || []);
+      return [...extract(res1), ...extract(res2), ...extract(res3)];
     },
   });
 
