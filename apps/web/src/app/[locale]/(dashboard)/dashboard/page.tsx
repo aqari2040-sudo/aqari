@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { CurrencyDisplay } from '@/components/shared/currency-display';
 import { useAuthStore } from '@/stores/auth-store';
+import { TenantDashboard } from './tenant-dashboard';
 
 const PIE_COLORS = ['#D4A843', '#A0785A', '#8B4513'];
 
@@ -25,6 +26,11 @@ export default function DashboardPage({ params: { locale } }: { params: { locale
   const t = useTranslations('dashboard');
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
+
+  // Show tenant-specific dashboard
+  if (user?.role === 'tenant') {
+    return <TenantDashboard locale={locale} />;
+  }
 
   const { data: occupancy } = useQuery({
     queryKey: ['dashboard-occupancy'],

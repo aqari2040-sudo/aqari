@@ -27,13 +27,13 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['owner', 'employee'] },
+  { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['owner', 'employee', 'tenant'] },
   { key: 'properties', href: '/properties', icon: Building2, roles: ['owner', 'employee'] },
   { key: 'units', href: '/units', icon: DoorOpen, roles: ['owner', 'employee'] },
   { key: 'tenants', href: '/tenants', icon: Users, roles: ['owner', 'employee'] },
   { key: 'contracts', href: '/contracts', icon: FileText, roles: ['owner', 'employee'] },
-  { key: 'payments', href: '/payments', icon: CreditCard, roles: ['owner', 'employee'] },
-  { key: 'maintenance', href: '/maintenance', icon: Wrench, roles: ['owner', 'employee'] },
+  { key: 'payments', href: '/payments', icon: CreditCard, roles: ['owner', 'employee', 'tenant'] },
+  { key: 'maintenance', href: '/maintenance', icon: Wrench, roles: ['owner', 'employee', 'tenant'] },
   { key: 'notifications', href: '/notifications', icon: Bell, roles: ['owner', 'employee', 'tenant'] },
   { key: 'reports', href: '/reports', icon: BarChart3, roles: ['owner'] },
   { key: 'audit_log', href: '/audit', icon: ScrollText, roles: ['owner'] },
