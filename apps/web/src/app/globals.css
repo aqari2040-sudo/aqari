@@ -52,8 +52,29 @@
 }
 
 [dir='rtl'] {
-  font-family: 'Noto Kufi Arabic', 'DM Sans', sans-serif;
+  font-family: 'Noto Kufi Arabic', 'DM Sans', sans-serif !important;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Force Noto Kufi Arabic on ALL elements in RTL mode */
+[dir='rtl'] *,
+[dir='rtl'] button,
+[dir='rtl'] input,
+[dir='rtl'] select,
+[dir='rtl'] textarea,
+[dir='rtl'] a,
+[dir='rtl'] span,
+[dir='rtl'] p,
+[dir='rtl'] h1,
+[dir='rtl'] h2,
+[dir='rtl'] h3,
+[dir='rtl'] h4,
+[dir='rtl'] h5,
+[dir='rtl'] h6,
+[dir='rtl'] label,
+[dir='rtl'] nav,
+[dir='rtl'] aside {
+  font-family: 'Noto Kufi Arabic', 'DM Sans', sans-serif !important;
 }
 
 /* Custom scrollbar */
