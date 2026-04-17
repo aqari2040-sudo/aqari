@@ -10,7 +10,7 @@ export function LanguageSwitcher({ currentLocale }: { currentLocale: string }) {
   const switchLocale = (newLocale: Locale) => {
     const segments = pathname.split('/');
     segments[1] = newLocale;
-    router.push(segments.join('/'));
+    router.replace(segments.join('/'));
   };
 
   const otherLocale = locales.find((l) => l !== currentLocale) as Locale;
