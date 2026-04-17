@@ -19,7 +19,7 @@ import { StatusBadge } from '@/components/shared/status-badge';
 import { CurrencyDisplay } from '@/components/shared/currency-display';
 import { useAuthStore } from '@/stores/auth-store';
 
-const PIE_COLORS = ['#22c55e', '#eab308', '#ef4444'];
+const PIE_COLORS = ['#D4A843', '#A0785A', '#8B4513'];
 
 export default function DashboardPage({ params: { locale } }: { params: { locale: string } }) {
   const t = useTranslations('dashboard');
@@ -193,14 +193,21 @@ export default function DashboardPage({ params: { locale } }: { params: { locale
           </CardHeader>
           <CardContent>
             {categoryBarData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={categoryBarData}>
-                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} />
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={categoryBarData} barGap={4}>
+                  <defs>
+                    <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#D4A843" stopOpacity={1} />
+                      <stop offset="100%" stopColor="#8B4513" stopOpacity={0.8} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#A0785A' }} axisLine={{ stroke: '#F5F0E8' }} tickLine={false} />
+                  <YAxis tick={{ fontSize: 12, fill: '#A0785A' }} axisLine={{ stroke: '#F5F0E8' }} tickLine={false} />
                   <Tooltip
-                    formatter={(value: number) => [`AED ${value.toLocaleString()}`, 'Cost']}
+                    contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', fontFamily: '"DM Sans"' }}
+                    formatter={(value: number) => [`AED ${value.toLocaleString()}`, t('total_cost')]}
                   />
-                  <Bar dataKey="cost" fill="#2563EB" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="cost" fill="url(#goldGradient)" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
