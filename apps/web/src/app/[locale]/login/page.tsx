@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth-store';
 
@@ -19,6 +20,7 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
   const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,13 +155,22 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-sheen-black">{t('password')}</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full rounded-lg border border-sheen-muted/30 bg-white px-4 py-3 text-sm text-sheen-black outline-none transition-all placeholder:text-sheen-muted/60 focus:border-sheen-gold focus:ring-2 focus:ring-sheen-gold/20"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full rounded-lg border border-sheen-muted/30 bg-white px-4 py-3 pe-11 text-sm text-sheen-black outline-none transition-all placeholder:text-sheen-muted/60 focus:border-sheen-gold focus:ring-2 focus:ring-sheen-gold/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute end-3 top-1/2 -translate-y-1/2 text-sheen-muted hover:text-sheen-black transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
               <button
                 type="submit"

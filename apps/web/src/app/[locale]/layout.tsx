@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: '/favicon.png',
-    apple: '/icon.png',
+    apple: '/logo.png',
   },
   appleWebApp: {
     capable: true,
@@ -44,7 +44,7 @@ export default async function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Aqari" />
-        <link rel="apple-touch-icon" href="/icon.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
       </head>
       <body
         className={dir === 'rtl' ? 'font-arabic' : 'font-sans'}
