@@ -22,7 +22,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <Stack
         screenOptions={{
-          headerShown: false,
+          headerShown: true,
           headerBackTitleVisible: false,
           headerTintColor: '#2563EB',
           headerStyle: { backgroundColor: '#fff' },
@@ -31,24 +31,18 @@ export default function RootLayout() {
       >
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-
-        {/* Payments stack */}
-        <Stack.Screen name="payments/upload-receipt" options={{ headerShown: true, title: 'Upload Receipt', presentation: 'modal' }} />
-        <Stack.Screen name="payments/pending" options={{ headerShown: true, title: 'Pending Receipts' }} />
-        <Stack.Screen name="payments/[id]" options={{ headerShown: true, title: 'Payment' }} />
-        <Stack.Screen name="payments/review/[id]" options={{ headerShown: true, title: 'Review Receipt' }} />
-
-        {/* Maintenance stack */}
-        <Stack.Screen name="maintenance/new-request" options={{ headerShown: true, title: 'New Request', presentation: 'modal' }} />
-        <Stack.Screen name="maintenance/approvals" options={{ headerShown: true, title: 'Cost Approvals' }} />
-        <Stack.Screen name="maintenance/add-cost/[id]" options={{ headerShown: true, title: 'Add Cost', presentation: 'modal' }} />
-        <Stack.Screen name="maintenance/[id]" options={{ headerShown: true, title: 'Maintenance' }} />
-
-        {/* Contract / Units / Dashboard */}
-        <Stack.Screen name="contract/index" options={{ headerShown: true, title: 'My Contract' }} />
-        <Stack.Screen name="units/index" options={{ headerShown: true, title: 'Units' }} />
-        <Stack.Screen name="units/[id]" options={{ headerShown: true, title: 'Unit' }} />
-        <Stack.Screen name="dashboard/index" options={{ headerShown: true, title: 'Dashboard' }} />
+        <Stack.Screen name="payments/upload-receipt" options={{ title: 'Upload Receipt' }} />
+        <Stack.Screen name="payments/pending" options={{ title: 'Pending Receipts' }} />
+        <Stack.Screen name="payments/[id]" options={{ title: 'Payment' }} />
+        <Stack.Screen name="payments/review/[id]" options={{ title: 'Review Receipt' }} />
+        <Stack.Screen name="maintenance/new-request" options={{ title: 'New Request' }} />
+        <Stack.Screen name="maintenance/approvals" options={{ title: 'Cost Approvals' }} />
+        <Stack.Screen name="maintenance/add-cost/[id]" options={{ title: 'Add Cost' }} />
+        <Stack.Screen name="maintenance/[id]" options={{ title: 'Maintenance' }} />
+        <Stack.Screen name="contract/index" options={{ title: 'My Contract' }} />
+        <Stack.Screen name="units/index" options={{ title: 'Units' }} />
+        <Stack.Screen name="units/[id]" options={{ title: 'Unit' }} />
+        <Stack.Screen name="dashboard/index" options={{ title: 'Dashboard' }} />
       </Stack>
     </QueryClientProvider>
   );
