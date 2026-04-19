@@ -261,9 +261,8 @@ export class DashboardService {
 
     const totalCostThisMonth = toNumber(monthlyApproved._sum.amount);
 
-    // By category: category lives on MaintenanceRequest, aggregate via relation
-    // Fetch approved costs this month with their request's category
-    const costsWithCategory = await this.prisma.maintenanceCost.findMany({
+    // Single fetch for both category + property breakdowns
+    const costsThisMonth = await this.prisma.maintenanceCost.findMany({
       where: {
         status: 'approved',
         created_at: monthRange,
@@ -274,45 +273,6 @@ export class DashboardService {
         maintenance_request: {
           select: {
             category: { select: { id: true, name: true } },
-          },
-        },
-      },
-    });
-
-    const categoryTotals = new Map<
-      string,
-      { category_name: string; total_cost: number; request_count: number }
-    >();
-
-    for (const cost of costsWithCategory) {
-      const cat = cost.maintenance_request?.category;
-      if (!cat) continue;
-      const existing = categoryTotals.get(cat.id);
-      if (existing) {
-        existing.total_cost += toNumber(cost.amount);
-        existing.request_count += 1;
-      } else {
-        categoryTotals.set(cat.id, {
-          category_name: cat.name,
-          total_cost: toNumber(cost.amount),
-          request_count: 1,
-        });
-      }
-    }
-
-    const byCategory = Array.from(categoryTotals.values());
-
-    // By property: fetch approved costs this month with unit->property
-    const costsWithProperty = await this.prisma.maintenanceCost.findMany({
-      where: {
-        status: 'approved',
-        created_at: monthRange,
-        ...propertyFilter,
-      },
-      select: {
-        amount: true,
-        maintenance_request: {
-          select: {
             unit: {
               select: {
                 property: { select: { id: true, name: true } },
@@ -323,28 +283,51 @@ export class DashboardService {
       },
     });
 
+    const categoryTotals = new Map<
+      string,
+      { category_name: string; total_cost: number; request_count: number }
+    >();
     const propertyTotals = new Map<
       string,
       { property_id: string; property_name: string; total_cost: number; request_count: number }
     >();
 
-    for (const cost of costsWithProperty) {
+    for (const cost of costsThisMonth) {
+      const amt = toNumber(cost.amount);
+      const cat = cost.maintenance_request?.category;
       const prop = cost.maintenance_request?.unit?.property;
-      if (!prop) continue;
-      const existing = propertyTotals.get(prop.id);
-      if (existing) {
-        existing.total_cost += toNumber(cost.amount);
-        existing.request_count += 1;
-      } else {
-        propertyTotals.set(prop.id, {
-          property_id: prop.id,
-          property_name: prop.name,
-          total_cost: toNumber(cost.amount),
-          request_count: 1,
-        });
+
+      if (cat) {
+        const existing = categoryTotals.get(cat.id);
+        if (existing) {
+          existing.total_cost += amt;
+          existing.request_count += 1;
+        } else {
+          categoryTotals.set(cat.id, {
+            category_name: cat.name,
+            total_cost: amt,
+            request_count: 1,
+          });
+        }
+      }
+
+      if (prop) {
+        const existing = propertyTotals.get(prop.id);
+        if (existing) {
+          existing.total_cost += amt;
+          existing.request_count += 1;
+        } else {
+          propertyTotals.set(prop.id, {
+            property_id: prop.id,
+            property_name: prop.name,
+            total_cost: amt,
+            request_count: 1,
+          });
+        }
       }
     }
 
+    const byCategory = Array.from(categoryTotals.values());
     const byProperty = Array.from(propertyTotals.values());
 
     // Recurring alerts: units with >= threshold requests in last windowDays days
@@ -473,22 +456,49 @@ export class DashboardService {
       unit_average: number;
     }[] = [];
 
+    // Batch: fetch unit averages for all relevant units in one query
+    const candidateUnitIds = Array.from(
+      new Set(
+        pendingCosts
+          .map((c) => c.maintenance_request?.unit_id)
+          .filter((id): id is string => !!id),
+      ),
+    );
+
+    const unitAverages = candidateUnitIds.length
+      ? await this.prisma.maintenanceCost.findMany({
+          where: {
+            status: 'approved',
+            created_at: { gte: twelveMonthsAgo },
+            maintenance_request: { unit_id: { in: candidateUnitIds } },
+          },
+          select: {
+            amount: true,
+            maintenance_request: { select: { unit_id: true } },
+          },
+        })
+      : [];
+
+    const unitAvgMap = new Map<string, { sum: number; count: number }>();
+    for (const row of unitAverages) {
+      const uid = row.maintenance_request?.unit_id;
+      if (!uid) continue;
+      const e = unitAvgMap.get(uid);
+      if (e) {
+        e.sum += toNumber(row.amount);
+        e.count += 1;
+      } else {
+        unitAvgMap.set(uid, { sum: toNumber(row.amount), count: 1 });
+      }
+    }
+
     for (const cost of pendingCosts) {
       const unitId = cost.maintenance_request?.unit_id;
       if (!unitId) continue;
-
-      const avgResult = await this.prisma.maintenanceCost.aggregate({
-        where: {
-          status: 'approved',
-          created_at: { gte: twelveMonthsAgo },
-          maintenance_request: { unit_id: unitId },
-        },
-        _avg: { amount: true },
-      });
-
-      const unitAverage = toNumber(avgResult._avg.amount);
+      const stats = unitAvgMap.get(unitId);
+      if (!stats || stats.count === 0) continue;
+      const unitAverage = stats.sum / stats.count;
       const amount = toNumber(cost.amount);
-
       if (unitAverage > 0 && amount > multiplier * unitAverage) {
         suspiciousCosts.push({
           cost_id: cost.id,
@@ -569,24 +579,43 @@ export class DashboardService {
       percentage: number;
     }[] = [];
 
+    // Group units by their budget period so we issue one query per period
+    const unitsByPeriod = new Map<string, typeof unitsWithBudget>();
     for (const unit of unitsWithBudget) {
-      const budget = toNumber(unit.maintenance_budget);
-      if (budget <= 0) continue;
+      if (toNumber(unit.maintenance_budget) <= 0) continue;
+      const period = (unit.maintenance_budget_period as string) || 'monthly';
+      const bucket = unitsByPeriod.get(period) ?? [];
+      bucket.push(unit);
+      unitsByPeriod.set(period, bucket);
+    }
 
-      const periodStart = getPeriodStart(unit.maintenance_budget_period as string);
-
-      const spentResult = await this.prisma.maintenanceCost.aggregate({
+    const spentByUnit = new Map<string, number>();
+    for (const [period, units] of unitsByPeriod) {
+      const periodStart = getPeriodStart(period);
+      const unitIds = units.map((u) => u.id);
+      const rows = await this.prisma.maintenanceCost.findMany({
         where: {
           status: 'approved',
           created_at: { gte: periodStart },
-          maintenance_request: { unit_id: unit.id },
+          maintenance_request: { unit_id: { in: unitIds } },
         },
-        _sum: { amount: true },
+        select: {
+          amount: true,
+          maintenance_request: { select: { unit_id: true } },
+        },
       });
+      for (const r of rows) {
+        const uid = r.maintenance_request?.unit_id;
+        if (!uid) continue;
+        spentByUnit.set(uid, (spentByUnit.get(uid) ?? 0) + toNumber(r.amount));
+      }
+    }
 
-      const spent = toNumber(spentResult._sum.amount);
+    for (const unit of unitsWithBudget) {
+      const budget = toNumber(unit.maintenance_budget);
+      if (budget <= 0) continue;
+      const spent = spentByUnit.get(unit.id) ?? 0;
       const percentage = Math.round((spent / budget) * 1000) / 10;
-
       if (percentage >= budgetThresholdPct) {
         budgetWarnings.push({
           unit_id: unit.id,
