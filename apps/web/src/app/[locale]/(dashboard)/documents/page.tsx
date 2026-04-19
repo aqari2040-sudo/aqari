@@ -275,11 +275,11 @@ export default function DocumentsPage({
         <select
           value={propertyFilter}
           onChange={(e) => setPropertyFilter(e.target.value)}
-          className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-sheen-cream focus:outline-none"
+          className="rounded-md border border-sheen-gold/30 bg-sheen-black px-3 py-2 text-sm text-sheen-gold focus:outline-none focus:ring-1 focus:ring-sheen-gold/60"
         >
-          <option value="">{labels.allProperties}</option>
+          <option value="" className="bg-sheen-black text-sheen-cream">{labels.allProperties}</option>
           {properties.map((p) => (
-            <option key={p.id} value={p.id}>
+            <option key={p.id} value={p.id} className="bg-sheen-black text-sheen-cream">
               {isAr ? p.name_ar : p.name}
             </option>
           ))}
@@ -456,11 +456,11 @@ export default function DocumentsPage({
                 <select
                   value={uploadPropertyId}
                   onChange={(e) => setUploadPropertyId(e.target.value)}
-                  className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-sheen-cream focus:outline-none focus:ring-1 focus:ring-sheen-gold/50"
+                  className="w-full rounded-md border border-sheen-gold/30 bg-sheen-black px-3 py-2 text-sm text-sheen-gold focus:outline-none focus:ring-1 focus:ring-sheen-gold/60"
                 >
-                  <option value="">{labels.allProperties}</option>
+                  <option value="" className="bg-sheen-black text-sheen-cream">{labels.allProperties}</option>
                   {properties.map((p) => (
-                    <option key={p.id} value={p.id}>
+                    <option key={p.id} value={p.id} className="bg-sheen-black text-sheen-cream">
                       {isAr ? p.name_ar : p.name}
                     </option>
                   ))}
