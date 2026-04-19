@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -136,14 +137,44 @@ function DocumentsBadge({
   onPreview: (d: { name: string; file_url: string }) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const isAr = locale === 'ar';
+
+  useLayoutEffect(() => {
+    if (!open || !buttonRef.current) return;
+
+    const updatePosition = () => {
+      const rect = buttonRef.current!.getBoundingClientRect();
+      const popWidth = 240;
+      const top = rect.bottom + 4;
+      const left = isAr
+        ? Math.max(8, rect.right - popWidth)
+        : Math.min(window.innerWidth - popWidth - 8, rect.left);
+      setCoords({ top, left });
+    };
+
+    updatePosition();
+    window.addEventListener('scroll', updatePosition, true);
+    window.addEventListener('resize', updatePosition);
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [open, isAr]);
 
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
+      const target = e.target as Node;
+      if (
+        buttonRef.current?.contains(target) ||
+        popoverRef.current?.contains(target)
+      ) {
+        return;
       }
+      setOpen(false);
     };
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
@@ -161,14 +192,14 @@ function DocumentsBadge({
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="relative inline-block"
-      onClick={(e) => e.stopPropagation()}
-    >
+    <>
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen((v) => !v);
+        }}
         className={cn(
           'inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium transition-colors',
           open ? 'bg-sheen-gold/15 text-sheen-gold' : 'text-sheen-gold hover:bg-sheen-gold/10',
@@ -177,37 +208,44 @@ function DocumentsBadge({
         <Paperclip className="h-3.5 w-3.5" />
         <span>{docs.length}</span>
       </button>
-      {open && (
-        <div
-          className={cn(
-            'absolute top-full z-50 mt-1 min-w-[240px] rounded-md border bg-white p-2 shadow-lg',
-            locale === 'ar' ? 'right-0' : 'left-0',
-          )}
-        >
-          <div className="mb-1 px-2 text-xs font-medium text-muted-foreground">
-            {locale === 'ar' ? 'الملفات المرفقة' : 'Attached files'}
-          </div>
-          <ul className="space-y-0.5">
-            {docs.map((d) => (
-              <li key={d.id}>
-                <button
-                  type="button"
-                  className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm hover:bg-sheen-cream text-left"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpen(false);
-                    onPreview({ name: d.name, file_url: d.file_url });
-                  }}
-                >
-                  <FileText className="h-3.5 w-3.5 shrink-0 text-sheen-gold" />
-                  <span className="truncate">{d.name}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+      {open && coords && typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            style={{
+              position: 'fixed',
+              top: coords.top,
+              left: coords.left,
+              minWidth: 240,
+            }}
+            className="z-[100] rounded-md border bg-white p-2 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-1 px-2 text-xs font-medium text-muted-foreground">
+              {isAr ? 'الملفات المرفقة' : 'Attached files'}
+            </div>
+            <ul className="space-y-0.5 max-h-[300px] overflow-auto">
+              {docs.map((d) => (
+                <li key={d.id}>
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm hover:bg-sheen-cream text-left"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpen(false);
+                      onPreview({ name: d.name, file_url: d.file_url });
+                    }}
+                  >
+                    <FileText className="h-3.5 w-3.5 shrink-0 text-sheen-gold" />
+                    <span className="truncate">{d.name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
 
