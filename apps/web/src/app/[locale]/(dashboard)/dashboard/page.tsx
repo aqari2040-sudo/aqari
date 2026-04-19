@@ -253,9 +253,9 @@ export default function DashboardPage({ params: { locale } }: { params: { locale
                 <h4 className="text-sm font-medium text-red-600">{t('overdue')}</h4>
                 {payments.overdue_tenants.slice(0, 5).map((ot: any) => (
                   <div key={ot.tenant_id} className="flex items-center justify-between rounded-md border p-2 text-sm">
-                    <div>
+                    <div className="flex items-center gap-3">
                       <span className="font-medium">{ot.tenant_name}</span>
-                      <span className="ms-2 text-muted-foreground">{ot.unit_number}</span>
+                      <span className="text-muted-foreground">{ot.unit_number}</span>
                     </div>
                     <div className="text-end">
                       <CurrencyDisplay amount={ot.amount_overdue} locale={locale as 'en' | 'ar'} className="font-medium text-red-600" />
