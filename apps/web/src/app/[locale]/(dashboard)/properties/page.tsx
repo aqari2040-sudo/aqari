@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
+import { Plus, Paperclip, FileText } from 'lucide-react';
 import apiClient from '@/lib/api-client';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { DataTable, type Column } from '@/components/shared/data-table';
 import { SearchInput } from '@/components/shared/search-input';
@@ -59,6 +60,51 @@ export default function PropertiesPage({ params: { locale } }: { params: { local
       render: (item) => (
         <span className="font-medium">{item._count?.units ?? item.unit_count ?? 0}</span>
       ),
+    },
+    {
+      key: 'documents',
+      header: locale === 'ar' ? 'المستندات' : 'Documents',
+      render: (item) => {
+        const docs = (item.documents || []) as { id: string; name: string; file_url: string }[];
+        if (docs.length === 0) {
+          return <span className="text-xs text-muted-foreground">—</span>;
+        }
+        return (
+          <div
+            className="group relative inline-flex items-center gap-1.5 cursor-help"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Paperclip className="h-3.5 w-3.5 text-sheen-gold" />
+            <span className="text-sm font-medium">{docs.length}</span>
+            <div
+              className={cn(
+                'invisible absolute top-full z-50 mt-1 min-w-[220px] rounded-md border bg-white p-2 shadow-lg opacity-0 transition-opacity group-hover:visible group-hover:opacity-100',
+                locale === 'ar' ? 'right-0' : 'left-0',
+              )}
+            >
+              <div className="mb-1 px-2 text-xs font-medium text-muted-foreground">
+                {locale === 'ar' ? 'الملفات المرفقة' : 'Attached files'}
+              </div>
+              <ul className="space-y-0.5">
+                {docs.map((d) => (
+                  <li key={d.id}>
+                    <a
+                      href={d.file_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-sheen-cream"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <FileText className="h-3.5 w-3.5 shrink-0 text-sheen-gold" />
+                      <span className="truncate">{d.name}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        );
+      },
     },
   ];
 

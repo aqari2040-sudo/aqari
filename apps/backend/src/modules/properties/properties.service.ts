@@ -54,9 +54,31 @@ export class PropertiesService {
       this.prisma.property.count({ where }),
     ]);
 
+    // Batch-fetch documents for all visible property IDs in one query
+    const propertyIds = data.map((p) => p.id);
+    const documents = propertyIds.length
+      ? await this.prisma.document.findMany({
+          where: {
+            property_id: { in: propertyIds },
+            deleted_at: null,
+          },
+          select: { id: true, name: true, property_id: true, file_url: true },
+          orderBy: { created_at: 'desc' },
+        })
+      : [];
+
+    const docsByProperty = new Map<string, { id: string; name: string; file_url: string }[]>();
+    for (const doc of documents) {
+      if (!doc.property_id) continue;
+      const bucket = docsByProperty.get(doc.property_id) ?? [];
+      bucket.push({ id: doc.id, name: doc.name, file_url: doc.file_url });
+      docsByProperty.set(doc.property_id, bucket);
+    }
+
     const items = data.map((p) => ({
       ...p,
       unit_count: p._count.units,
+      documents: docsByProperty.get(p.id) ?? [],
       _count: undefined,
     }));
 
