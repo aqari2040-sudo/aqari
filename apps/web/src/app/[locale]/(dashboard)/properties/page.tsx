@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Paperclip, FileText } from 'lucide-react';
+import { Plus, Paperclip, FileText, X, ExternalLink } from 'lucide-react';
 import apiClient from '@/lib/api-client';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,7 @@ export default function PropertiesPage({ params: { locale } }: { params: { local
   const router = useRouter();
   const { page, limit, sortBy, sortOrder, setPage, handleSort, handleSearch, queryParams } = usePagination();
   const [typeFilter, setTypeFilter] = useState<string>('');
+  const [previewDoc, setPreviewDoc] = useState<{ name: string; file_url: string } | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['properties', queryParams, typeFilter],
@@ -88,16 +89,17 @@ export default function PropertiesPage({ params: { locale } }: { params: { local
               <ul className="space-y-0.5">
                 {docs.map((d) => (
                   <li key={d.id}>
-                    <a
-                      href={d.file_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-sheen-cream"
-                      onClick={(e) => e.stopPropagation()}
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm hover:bg-sheen-cream text-left"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPreviewDoc({ name: d.name, file_url: d.file_url });
+                      }}
                     >
                       <FileText className="h-3.5 w-3.5 shrink-0 text-sheen-gold" />
                       <span className="truncate">{d.name}</span>
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -146,6 +148,93 @@ export default function PropertiesPage({ params: { locale } }: { params: { local
         onSort={handleSort}
         onRowClick={(item) => router.push(`/${locale}/properties/${item.id}`)}
       />
+
+      {previewDoc && (
+        <FilePreviewModal
+          name={previewDoc.name}
+          fileUrl={previewDoc.file_url}
+          locale={locale}
+          onClose={() => setPreviewDoc(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function FilePreviewModal({
+  name,
+  fileUrl,
+  locale,
+  onClose,
+}: {
+  name: string;
+  fileUrl: string;
+  locale: string;
+  onClose: () => void;
+}) {
+  const isAr = locale === 'ar';
+  const lower = fileUrl.toLowerCase();
+  const isImage = /\.(png|jpe?g|webp|gif|bmp|svg)(\?|$)/.test(lower);
+  const isPdf = /\.pdf(\?|$)/.test(lower);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <div
+        className="relative flex h-[85vh] w-full max-w-5xl flex-col overflow-hidden rounded-xl border border-white/10 bg-sheen-black shadow-2xl"
+        dir={isAr ? 'rtl' : 'ltr'}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <FileText className="h-5 w-5 shrink-0 text-sheen-gold" />
+            <h3 className="truncate text-sm font-semibold text-sheen-cream">{name}</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <a
+              href={fileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 rounded-md border border-sheen-gold/40 px-3 py-1.5 text-xs text-sheen-gold hover:bg-sheen-gold/10"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              {isAr ? 'فتح في نافذة جديدة' : 'Open in new tab'}
+            </a>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-md p-1.5 text-gray-400 hover:bg-white/5 hover:text-sheen-cream"
+              aria-label={isAr ? 'إغلاق' : 'Close'}
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-1 items-center justify-center overflow-auto bg-black/40">
+          {isImage ? (
+            <img
+              src={fileUrl}
+              alt={name}
+              className="max-h-full max-w-full object-contain"
+            />
+          ) : isPdf ? (
+            <iframe
+              src={fileUrl}
+              title={name}
+              className="h-full w-full"
+            />
+          ) : (
+            <div className="p-8 text-center text-sm text-gray-400">
+              {isAr
+                ? 'لا يمكن معاينة هذا النوع من الملفات. افتحه في نافذة جديدة.'
+                : 'Preview not available for this file type. Open it in a new tab.'}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
