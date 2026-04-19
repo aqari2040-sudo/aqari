@@ -18,6 +18,7 @@ import {
   Settings,
   Bell,
   Brain,
+  FolderOpen,
 } from 'lucide-react';
 
 interface NavItem {
@@ -33,6 +34,7 @@ const navItems: NavItem[] = [
   { key: 'units', href: '/units', icon: DoorOpen, roles: ['owner', 'employee'] },
   { key: 'tenants', href: '/tenants', icon: Users, roles: ['owner', 'employee'] },
   { key: 'contracts', href: '/contracts', icon: FileText, roles: ['owner', 'employee'] },
+  { key: 'documents', href: '/documents', icon: FolderOpen, roles: ['owner'] },
   { key: 'payments', href: '/payments', icon: CreditCard, roles: ['owner', 'employee', 'tenant'] },
   { key: 'maintenance', href: '/maintenance', icon: Wrench, roles: ['owner', 'employee', 'tenant'] },
   { key: 'notifications', href: '/notifications', icon: Bell, roles: ['owner', 'employee', 'tenant'] },

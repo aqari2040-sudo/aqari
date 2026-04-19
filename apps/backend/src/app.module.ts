@@ -17,6 +17,7 @@ import { SettingsModule } from './modules/settings/settings.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { HealthModule } from './modules/health/health.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { DocumentsModule } from './modules/documents/documents.module';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 
 @Module({
@@ -49,6 +50,7 @@ import { AuditInterceptor } from './common/interceptors/audit.interceptor';
     ReportsModule,
     HealthModule,
     AnalyticsModule,
+    DocumentsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
