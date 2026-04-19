@@ -135,6 +135,8 @@ export class PropertiesService {
         type: dto.type,
         address: dto.address,
         address_ar: dto.address_ar,
+        latitude: dto.latitude ?? null,
+        longitude: dto.longitude ?? null,
       },
     });
   }
@@ -150,6 +152,8 @@ export class PropertiesService {
         ...(dto.type !== undefined && { type: dto.type }),
         ...(dto.address !== undefined && { address: dto.address }),
         ...(dto.address_ar !== undefined && { address_ar: dto.address_ar }),
+        ...(dto.latitude !== undefined && { latitude: dto.latitude }),
+        ...(dto.longitude !== undefined && { longitude: dto.longitude }),
       },
     });
   }

@@ -6,6 +6,8 @@ export const createPropertySchema = z.object({
   type: z.enum(['tower', 'house_group']),
   address: z.string().min(1),
   address_ar: z.string().min(1),
+  latitude: z.number().min(-90).max(90).optional().nullable(),
+  longitude: z.number().min(-180).max(180).optional().nullable(),
 });
 
 export const updatePropertySchema = createPropertySchema.partial();

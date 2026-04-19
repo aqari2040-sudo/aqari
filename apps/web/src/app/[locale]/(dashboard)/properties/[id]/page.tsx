@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Pencil, Trash2, Plus } from 'lucide-react';
+import { ArrowLeft, Pencil, Trash2, Plus, MapPin, ExternalLink } from 'lucide-react';
+import { LocationPicker } from '@/components/map/location-picker';
 import apiClient from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -133,6 +134,32 @@ export default function PropertyDetailPage({
           </CardContent>
         </Card>
       </div>
+
+      {/* Location map */}
+      {property.latitude != null && property.longitude != null && (
+        <div className="mb-6">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="flex items-center gap-2 text-lg font-semibold">
+              <MapPin className="h-5 w-5 text-sheen-gold" />
+              {locale === 'ar' ? 'الموقع' : 'Location'}
+            </h2>
+            <a
+              href={`https://www.openstreetmap.org/?mlat=${property.latitude}&mlon=${property.longitude}#map=17/${property.latitude}/${property.longitude}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs text-sheen-gold hover:underline"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              {locale === 'ar' ? 'فتح في خريطة أكبر' : 'Open in full map'}
+            </a>
+          </div>
+          <LocationPicker
+            value={{ lat: property.latitude, lng: property.longitude }}
+            readOnly
+            height={280}
+          />
+        </div>
+      )}
 
       {/* Units table */}
       <div className="mb-4 flex items-center justify-between">

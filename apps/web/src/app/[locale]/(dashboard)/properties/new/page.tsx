@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useMutation } from '@tanstack/react-query';
@@ -10,11 +11,15 @@ import apiClient from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LocationPicker } from '@/components/map/location-picker';
+import { MapPin } from 'lucide-react';
 
 export default function NewPropertyPage({ params: { locale } }: { params: { locale: string } }) {
   const t = useTranslations('properties');
   const tc = useTranslations('common');
   const router = useRouter();
+
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   const {
     register,
@@ -26,7 +31,12 @@ export default function NewPropertyPage({ params: { locale } }: { params: { loca
   });
 
   const mutation = useMutation({
-    mutationFn: (data: CreatePropertySchema) => apiClient.post('/properties', data),
+    mutationFn: (data: CreatePropertySchema) =>
+      apiClient.post('/properties', {
+        ...data,
+        latitude: location?.lat ?? null,
+        longitude: location?.lng ?? null,
+      }),
     onSuccess: () => router.push(`/${locale}/properties`),
   });
 
@@ -75,6 +85,23 @@ export default function NewPropertyPage({ params: { locale } }: { params: { loca
                 <Input {...register('address_ar')} placeholder="دبي، الإمارات" dir="rtl" />
                 {errors.address_ar && <p className="mt-1 text-xs text-destructive">{errors.address_ar.message}</p>}
               </div>
+            </div>
+
+            <div>
+              <label className="mb-1.5 flex items-center gap-2 text-sm font-medium">
+                <MapPin className="h-4 w-4 text-sheen-gold" />
+                {locale === 'ar' ? 'الموقع على الخريطة' : 'Location on map'}
+                <span className="text-xs font-normal text-muted-foreground">
+                  {locale === 'ar' ? '(اختياري — انقر على الخريطة لتحديد الموقع)' : '(optional — click the map to drop a pin)'}
+                </span>
+              </label>
+              <LocationPicker value={location} onChange={setLocation} height={320} />
+              {location && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {locale === 'ar' ? 'الإحداثيات:' : 'Coordinates:'}{' '}
+                  <span className="font-mono">{location.lat.toFixed(6)}, {location.lng.toFixed(6)}</span>
+                </p>
+              )}
             </div>
 
             {mutation.isError && (
