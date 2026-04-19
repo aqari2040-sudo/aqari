@@ -68,6 +68,7 @@ export default function DocumentsPage({
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingDoc, setEditingDoc] = useState<Document | null>(null);
+  const [deletingDoc, setDeletingDoc] = useState<Document | null>(null);
 
   // Upload form state
   const [uploadName, setUploadName] = useState('');
@@ -152,9 +153,14 @@ export default function DocumentsPage({
   });
 
   const handleDelete = (doc: Document) => {
-    if (window.confirm(labels.confirmDelete)) {
-      deleteMutation.mutate(doc.id);
-    }
+    setDeletingDoc(doc);
+  };
+
+  const confirmDelete = () => {
+    if (!deletingDoc) return;
+    deleteMutation.mutate(deletingDoc.id, {
+      onSettled: () => setDeletingDoc(null),
+    });
   };
 
   const handleEditOpen = (doc: Document) => {
@@ -498,6 +504,49 @@ export default function DocumentsPage({
                     {labels.upload}
                   </>
                 )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirm Dialog */}
+      {deletingDoc && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div
+            className="w-full max-w-sm rounded-xl bg-sheen-black border border-white/10 shadow-2xl"
+            dir={isAr ? 'rtl' : 'ltr'}
+          >
+            <div className="border-b border-white/10 px-6 py-4">
+              <h2 className="text-lg font-semibold text-sheen-cream flex items-center gap-2">
+                <Trash2 className="h-5 w-5 text-red-400" />
+                {labels.delete}
+              </h2>
+            </div>
+            <div className="px-6 py-5">
+              <p className="text-sm text-gray-300">{labels.confirmDelete}</p>
+              <p className="mt-2 text-sm font-medium text-sheen-cream truncate">{deletingDoc.name}</p>
+            </div>
+            <div className="flex justify-end gap-3 border-t border-white/10 px-6 py-4">
+              <Button
+                variant="outline"
+                className="border-white/10 text-gray-300 hover:bg-white/5"
+                onClick={() => setDeletingDoc(null)}
+                disabled={deleteMutation.isPending}
+              >
+                {labels.cancel}
+              </Button>
+              <Button
+                onClick={confirmDelete}
+                disabled={deleteMutation.isPending}
+                className="bg-red-500 text-white hover:bg-red-600 flex items-center gap-2"
+              >
+                {deleteMutation.isPending ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+                {labels.delete}
               </Button>
             </div>
           </div>
