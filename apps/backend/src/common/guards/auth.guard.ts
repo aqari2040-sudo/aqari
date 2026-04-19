@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import * as jwt from 'jsonwebtoken';
+import { createRemoteJWKSet, jwtVerify, JWTPayload } from 'jose';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { PrismaService } from '../../prisma/prisma.service';
 import type { AuthUser } from '../decorators/current-user.decorator';
@@ -16,10 +16,10 @@ type CachedUser = { user: AuthUser; expiresAt: number };
 @Injectable()
 export class AuthGuard implements CanActivate {
   private supabase: SupabaseClient;
-  private jwtSecret?: string;
+  private jwks: ReturnType<typeof createRemoteJWKSet> | null = null;
   private tokenCache = new Map<string, CachedUser>();
   private tenantIdCache = new Map<string, { tenantId: string; expiresAt: number }>();
-  private readonly TOKEN_CACHE_TTL_MS = 60_000; // 60s — short enough for role changes
+  private readonly TOKEN_CACHE_TTL_MS = 60_000; // 60s
   private readonly TENANT_CACHE_TTL_MS = 5 * 60_000; // 5 min
 
   constructor(
@@ -30,7 +30,14 @@ export class AuthGuard implements CanActivate {
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_ANON_KEY!,
     );
-    this.jwtSecret = process.env.SUPABASE_JWT_SECRET;
+
+    const supabaseUrl = process.env.SUPABASE_URL;
+    if (supabaseUrl) {
+      // JWKS endpoint auto-rotates keys; supports HS256, ES256, RS256, etc.
+      this.jwks = createRemoteJWKSet(
+        new URL(`${supabaseUrl}/auth/v1/.well-known/jwks.json`),
+      );
+    }
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -48,7 +55,6 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Missing authorization token');
     }
 
-    // 1. Token cache (short TTL) — avoids network + DB for repeated calls
     const cached = this.tokenCache.get(token);
     if (cached && cached.expiresAt > Date.now()) {
       request.user = cached.user;
@@ -58,7 +64,6 @@ export class AuthGuard implements CanActivate {
     try {
       const authUser = await this.resolveUser(token);
 
-      // Resolve tenant_id (cached per user) for tenant role
       if (authUser.role === 'tenant') {
         authUser.tenant_id = await this.resolveTenantId(authUser.id);
       }
@@ -77,36 +82,15 @@ export class AuthGuard implements CanActivate {
   }
 
   private async resolveUser(token: string): Promise<AuthUser> {
-    // Fast path: verify JWT locally with HS256 + Supabase JWT secret
-    if (this.jwtSecret) {
+    if (this.jwks) {
       try {
-        const payload = jwt.verify(token, this.jwtSecret, {
-          algorithms: ['HS256'],
-        }) as jwt.JwtPayload;
-
-        if (!payload.sub) {
-          throw new UnauthorizedException('Invalid token: missing sub');
-        }
-
-        const meta = (payload as any).user_metadata ?? {};
-        return {
-          id: payload.sub,
-          email: payload.email,
-          phone: (payload as any).phone,
-          role: meta.role || 'tenant',
-        };
-      } catch (err) {
-        if (err instanceof jwt.TokenExpiredError) {
-          throw new UnauthorizedException('Token expired');
-        }
-        if (err instanceof jwt.JsonWebTokenError) {
-          throw new UnauthorizedException('Invalid token');
-        }
-        throw err;
+        const { payload } = await jwtVerify(token, this.jwks);
+        return this.payloadToUser(payload);
+      } catch {
+        // fall through to network verification
       }
     }
 
-    // Fallback: network call to Supabase (slower, ~200-400ms)
     const { data, error } = await this.supabase.auth.getUser(token);
     if (error || !data.user) {
       throw new UnauthorizedException('Invalid or expired token');
@@ -117,6 +101,19 @@ export class AuthGuard implements CanActivate {
       email: u.email,
       phone: u.phone,
       role: u.user_metadata?.role || 'tenant',
+    };
+  }
+
+  private payloadToUser(payload: JWTPayload): AuthUser {
+    if (!payload.sub) {
+      throw new UnauthorizedException('Invalid token: missing sub');
+    }
+    const meta = (payload as any).user_metadata ?? {};
+    return {
+      id: payload.sub,
+      email: (payload as any).email,
+      phone: (payload as any).phone,
+      role: meta.role || 'tenant',
     };
   }
 
