@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -65,48 +65,13 @@ export default function PropertiesPage({ params: { locale } }: { params: { local
     {
       key: 'documents',
       header: locale === 'ar' ? 'المستندات' : 'Documents',
-      render: (item) => {
-        const docs = (item.documents || []) as { id: string; name: string; file_url: string }[];
-        if (docs.length === 0) {
-          return <span className="text-xs text-muted-foreground">—</span>;
-        }
-        return (
-          <div
-            className="group relative inline-flex items-center gap-1.5 cursor-help"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Paperclip className="h-3.5 w-3.5 text-sheen-gold" />
-            <span className="text-sm font-medium">{docs.length}</span>
-            <div
-              className={cn(
-                'invisible absolute top-full z-50 mt-1 min-w-[220px] rounded-md border bg-white p-2 shadow-lg opacity-0 transition-opacity group-hover:visible group-hover:opacity-100',
-                locale === 'ar' ? 'right-0' : 'left-0',
-              )}
-            >
-              <div className="mb-1 px-2 text-xs font-medium text-muted-foreground">
-                {locale === 'ar' ? 'الملفات المرفقة' : 'Attached files'}
-              </div>
-              <ul className="space-y-0.5">
-                {docs.map((d) => (
-                  <li key={d.id}>
-                    <button
-                      type="button"
-                      className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm hover:bg-sheen-cream text-left"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPreviewDoc({ name: d.name, file_url: d.file_url });
-                      }}
-                    >
-                      <FileText className="h-3.5 w-3.5 shrink-0 text-sheen-gold" />
-                      <span className="truncate">{d.name}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        );
-      },
+      render: (item) => (
+        <DocumentsBadge
+          docs={(item.documents || []) as { id: string; name: string; file_url: string }[]}
+          locale={locale}
+          onPreview={(d) => setPreviewDoc(d)}
+        />
+      ),
     },
   ];
 
@@ -156,6 +121,91 @@ export default function PropertiesPage({ params: { locale } }: { params: { local
           locale={locale}
           onClose={() => setPreviewDoc(null)}
         />
+      )}
+    </div>
+  );
+}
+
+function DocumentsBadge({
+  docs,
+  locale,
+  onPreview,
+}: {
+  docs: { id: string; name: string; file_url: string }[];
+  locale: string;
+  onPreview: (d: { name: string; file_url: string }) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [open]);
+
+  if (docs.length === 0) {
+    return <span className="text-xs text-muted-foreground">—</span>;
+  }
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative inline-block"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          'inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium transition-colors',
+          open ? 'bg-sheen-gold/15 text-sheen-gold' : 'text-sheen-gold hover:bg-sheen-gold/10',
+        )}
+      >
+        <Paperclip className="h-3.5 w-3.5" />
+        <span>{docs.length}</span>
+      </button>
+      {open && (
+        <div
+          className={cn(
+            'absolute top-full z-50 mt-1 min-w-[240px] rounded-md border bg-white p-2 shadow-lg',
+            locale === 'ar' ? 'right-0' : 'left-0',
+          )}
+        >
+          <div className="mb-1 px-2 text-xs font-medium text-muted-foreground">
+            {locale === 'ar' ? 'الملفات المرفقة' : 'Attached files'}
+          </div>
+          <ul className="space-y-0.5">
+            {docs.map((d) => (
+              <li key={d.id}>
+                <button
+                  type="button"
+                  className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm hover:bg-sheen-cream text-left"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpen(false);
+                    onPreview({ name: d.name, file_url: d.file_url });
+                  }}
+                >
+                  <FileText className="h-3.5 w-3.5 shrink-0 text-sheen-gold" />
+                  <span className="truncate">{d.name}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
